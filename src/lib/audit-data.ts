@@ -21,9 +21,10 @@ export class AuditDataService {
 
   constructor() {
     this.fuse = new Fuse([], {
-      keys: ['madde', 'rehberRef', 'soru', 'aciklama'],
-      threshold: 0.3,
+      keys: ['madde', 'rehberRef', 'soru', 'aciklama', 'prosedür', 'kanit'],
+      threshold: 0.4, // Make search a bit more fuzzy
       includeScore: true,
+      ignoreLocation: true, // Search the entire string
     });
   }
 
@@ -110,9 +111,9 @@ export class AuditDataService {
     return [...new Set(this.data.map(item => item.madde))];
   }
 
-  searchByMadde(query: string): AuditItem[] {
-    if (!query.trim()) return this.data;
-    
+  search(query: string): AuditItem[] {
+    if (!query.trim()) return this.getAllData();
+
     const results = this.fuse.search(query);
     return results.map(result => result.item);
   }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { SearchInput } from './SearchInput';
 import { AuditCard } from './AuditCard';
-import { AuditItem } from '@/lib/audit-data';
+import { AuditItem, auditDataService } from '@/lib/audit-data';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -18,16 +18,8 @@ export function Sidebar({ items, selectedItem, onSelectItem, className }: Sideba
   const [filteredItems, setFilteredItems] = useState<AuditItem[]>(items);
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredItems(items);
-    } else {
-      const filtered = items.filter(item =>
-        item.madde.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.soru.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.rehberRef.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredItems(filtered);
-    }
+    const searchResults = auditDataService.search(searchQuery);
+    setFilteredItems(searchResults);
   }, [searchQuery, items]);
 
   return (
