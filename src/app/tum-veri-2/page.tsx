@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Search, Copy, Filter, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, Copy, Filter, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 const sortedData = (items: AuditItem[], sortConfig: { key: keyof AuditItem | null; direction: 'asc' | 'desc' }) => {
@@ -98,6 +98,11 @@ export default function TumVeri2Page() {
     key: keyof AuditItem | null;
     direction: 'asc' | 'desc';
   }>({ key: null, direction: 'asc' });
+  const tableRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [initialScrollLeft, setInitialScrollLeft] = useState(0);
 
   const copyToClipboard = async () => {
     const csvContent = [
@@ -136,6 +141,46 @@ export default function TumVeri2Page() {
     }
     setSortConfig({ key, direction });
   };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!tableRef.current) return;
+    
+    setIsDragging(true);
+    setStartX(e.pageX - tableRef.current.offsetLeft);
+    setInitialScrollLeft(tableRef.current.scrollLeft);
+    
+    // Prevent text selection during drag
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'grabbing';
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !tableRef.current) return;
+    
+    e.preventDefault();
+    const x = e.pageX - tableRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    tableRef.current.scrollLeft = initialScrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // Restore text selection
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, startX, initialScrollLeft]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -297,78 +342,102 @@ export default function TumVeri2Page() {
 
         {/* Tablo */}
         <EnhancedTable>
-          <table className="min-w-[1400px] w-full divide-y divide-slate-200">
-            <thead className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[250px]">
-                  <div className="flex items-center gap-2">
-                    <span>Analiz Edilen Madde</span>
-                    <button 
-                      onClick={() => handleSort('madde')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[300px]">
-                  <div className="flex items-center gap-2">
-                    <span>İlişkili Rehber</span>
-                    <button 
-                      onClick={() => handleSort('rehberRef')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
-                  <div className="flex items-center gap-2">
-                    <span>Kontrol Sorusu</span>
-                    <button 
-                      onClick={() => handleSort('soru')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
-                  <div className="flex items-center gap-2">
-                    <span>Açıklama ve Gerekçe</span>
-                    <button 
-                      onClick={() => handleSort('aciklama')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
-                  <div className="flex items-center gap-2">
-                    <span>Denetim Testi</span>
-                    <button 
-                      onClick={() => handleSort('prosedür')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
-                  <div className="flex items-center gap-2">
-                    <span>Uygulama Notu</span>
-                    <button 
-                      onClick={() => handleSort('kanit')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      <ArrowUpDown className="w-3 h-3" />
-                    </button>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
+          <div ref={tableRef} className="enhanced-scrollbar overflow-x-auto overflow-y-visible border border-slate-200 rounded-lg">
+            <table className="min-w-[1400px] w-full divide-y divide-slate-200">
+              <thead className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
+                <tr className="border-b border-slate-200">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[250px]">
+                    <div className="flex items-center gap-2">
+                      <span>Analiz Edilen Madde</span>
+                      <button 
+                        onClick={() => handleSort('madde')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[300px]">
+                    <div className="flex items-center gap-2">
+                      <span>İlişkili Rehber</span>
+                      <button 
+                        onClick={() => handleSort('rehberRef')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
+                    <div className="flex items-center gap-2">
+                      <span>Kontrol Sorusu</span>
+                      <button 
+                        onClick={() => handleSort('soru')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
+                    <div className="flex items-center gap-2">
+                      <span>Açıklama ve Gerekçe</span>
+                      <button 
+                        onClick={() => handleSort('aciklama')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
+                    <div className="flex items-center gap-2">
+                      <span>Denetim Testi</span>
+                      <button 
+                        onClick={() => handleSort('prosedür')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
+                    <div className="flex items-center gap-2">
+                      <span>Uygulama Notu</span>
+                      <button 
+                        onClick={() => handleSort('kanit')}
+                        className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        <ArrowUpDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-200">
+                {/* Horizontal Slider Row */}
+                <tr>
+                  <td colSpan={6} className="p-0 bg-gradient-to-r from-slate-50 to-indigo-50 border-t border-slate-200">
+                    <div className="flex items-center justify-center py-3">
+                      <div className="flex items-center gap-4 w-full max-w-2xl">
+                        <div className="text-xs text-slate-600 font-medium whitespace-nowrap">
+                          Tabloyu sürükleyin:
+                        </div>
+                        <div 
+                          ref={sliderRef}
+                          className="flex-1 h-2 bg-slate-200 rounded-full relative cursor-grab active:cursor-grabbing"
+                          onMouseDown={handleMouseDown}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full opacity-50"></div>
+                          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-indigo-500 rounded-full shadow-md"></div>
+                        </div>
+                        <div className="text-xs text-slate-500 whitespace-nowrap">
+                          Sürükle bırak
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
               {filteredItems.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
@@ -413,6 +482,7 @@ export default function TumVeri2Page() {
               )}
             </tbody>
           </table>
+          </div>
         </EnhancedTable>
       </div>
     </div>
