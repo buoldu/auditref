@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy, ChevronDown as DropdownIcon } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 export default function Home() {
@@ -10,6 +10,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [showCopyDropdown, setShowCopyDropdown] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -83,6 +85,41 @@ export default function Home() {
       return <CheckCircle className="h-5 w-5 text-blue-600" />;
     } else {
       return <FileText className="h-5 w-5 text-slate-600" />;
+    }
+  };
+
+  const copySelectedItem = async () => {
+    if (!selectedItem) return;
+    
+    const content = `Analiz Edilen Madde: ${selectedItem.madde || ''}
+İlişkili Rehber: ${selectedItem.rehberRef || ''}
+Kontrol Sorusu: ${selectedItem.soru || ''}
+Açıklama ve Gerekçe: ${selectedItem.aciklama || ''}
+Denetim Testi: ${selectedItem.prosedür || ''}
+Uygulama Notu: ${selectedItem.kanit || ''}`;
+
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Kopyalama başarısız:', err);
+    }
+  };
+
+  const copyAsTable = async () => {
+    if (!selectedItem) return;
+    
+    const content = `Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu
+"${(selectedItem.madde || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.rehberRef || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.soru || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.aciklama || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.prosedür || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.kanit || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"`;
+
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopySuccess(true);
+      setShowCopyDropdown(false);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Kopyalama başarısız:', err);
     }
   };
 
@@ -198,8 +235,41 @@ export default function Home() {
             {selectedItem ? (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="p-6 bg-gradient-to-r from-indigo-500 to-indigo-600">
-                  <h3 className="text-xl font-semibold text-white">{selectedItem.madde}</h3>
-                  <p className="text-indigo-100 mt-2">{selectedItem.rehberRef}</p>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-white">{selectedItem.madde}</h3>
+                      <p className="text-indigo-100 mt-2">{selectedItem.rehberRef}</p>
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowCopyDropdown(!showCopyDropdown)}
+                        className="ml-4 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2"
+                      >
+                        <Copy className="w-4 h-4" />
+                        {copySuccess ? 'Kopyalandı!' : 'Kopyala'}
+                        <DropdownIcon className="w-3 h-3" />
+                      </button>
+                      
+                      {showCopyDropdown && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
+                          <button
+                            onClick={copySelectedItem}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+                          >
+                            <Copy className="w-4 h-4" />
+                            Metin olarak kopyala
+                          </button>
+                          <button
+                            onClick={copyAsTable}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+                          >
+                            <Copy className="w-4 h-4" />
+                            Tablo olarak kopyala
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="p-6 space-y-6">
