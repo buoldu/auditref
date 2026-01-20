@@ -105,17 +105,17 @@ export default function TumVeri2Page() {
   const [initialScrollLeft, setInitialScrollLeft] = useState(0);
 
   const copyToClipboard = async () => {
-    let content = '';
+    let content = 'Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu\n';
     
-    filteredItems.forEach((item, index) => {
-      content += `Kayıt ${index + 1}:\n`;
-      content += `Analiz Edilen Madde: ${item.madde || ''}\n`;
-      content += `İlişkili Rehber: ${item.rehberRef || ''}\n`;
-      content += `Kontrol Sorusu: ${item.soru || ''}\n`;
-      content += `Açıklama: ${item.aciklama || ''}\n`;
-      content += `Denetim Testi: ${item.prosedür || ''}\n`;
-      content += `Uygulama Notu: ${item.kanit || ''}\n`;
-      content += '\n' + '='.repeat(50) + '\n\n';
+    filteredItems.forEach(item => {
+      const madde = (item.madde || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const rehberRef = (item.rehberRef || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const soru = (item.soru || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const aciklama = (item.aciklama || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const prosedür = (item.prosedür || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const kanit = (item.kanit || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      
+      content += `${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}\n`;
     });
 
     try {
