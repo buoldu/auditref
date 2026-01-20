@@ -11,7 +11,7 @@ export default function Home() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [version, setVersion] = useState('0.1.1');
+  const [version, setVersion] = useState('0.1.2');
   
   // Geliştirme zaman damgası
   const buildTimestamp = new Date().toLocaleString('tr-TR', { 
@@ -113,21 +113,16 @@ export default function Home() {
   const copyAsTable = async () => {
     if (!selectedItem) return;
     
-    // Excel CSV formatı - virgülle ayrılmış ve tırnak içinde
-    const cleanText = (text: string) => {
-      if (!text) return '';
-      return text.replace(/"/g, '""').replace(/\n/g, ' ').replace(/\t/g, ' ');
-    };
+    // Excel için en basit format - tab ile ayrılmış, tırnaksız
+    const madde = (selectedItem.madde || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const rehberRef = (selectedItem.rehberRef || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const soru = (selectedItem.soru || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const aciklama = (selectedItem.aciklama || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const prosedür = (selectedItem.prosedür || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const kanit = (selectedItem.kanit || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
     
-    const madde = cleanText(selectedItem.madde || '');
-    const rehberRef = cleanText(selectedItem.rehberRef || '');
-    const soru = cleanText(selectedItem.soru || '');
-    const aciklama = cleanText(selectedItem.aciklama || '');
-    const prosedür = cleanText(selectedItem.prosedür || '');
-    const kanit = cleanText(selectedItem.kanit || '');
-    
-    const content = `"Analiz Edilen Madde","İlişkili Rehber","Kontrol Sorusu","Açıklama ve Gerekçe","Denetim Testi","Uygulama Notu"
-"${madde}","${rehberRef}","${soru}","${aciklama}","${prosedür}","${kanit}"`;
+    const content = `Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu
+${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
 
     try {
       await navigator.clipboard.writeText(content);
