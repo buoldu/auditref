@@ -110,8 +110,21 @@ Uygulama Notu: ${selectedItem.kanit || ''}`;
   const copyAsTable = async () => {
     if (!selectedItem) return;
     
-    const content = `Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu
-"${(selectedItem.madde || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.rehberRef || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.soru || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.aciklama || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.prosedür || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"\t"${(selectedItem.kanit || '').replace(/\n/g, ' ').replace(/\t/g, ' ')}"`;
+    // Excel CSV formatı - virgülle ayrılmış ve tırnak içinde
+    const cleanText = (text: string) => {
+      if (!text) return '';
+      return text.replace(/"/g, '""').replace(/\n/g, ' ').replace(/\t/g, ' ');
+    };
+    
+    const madde = cleanText(selectedItem.madde || '');
+    const rehberRef = cleanText(selectedItem.rehberRef || '');
+    const soru = cleanText(selectedItem.soru || '');
+    const aciklama = cleanText(selectedItem.aciklama || '');
+    const prosedür = cleanText(selectedItem.prosedür || '');
+    const kanit = cleanText(selectedItem.kanit || '');
+    
+    const content = `"Analiz Edilen Madde","İlişkili Rehber","Kontrol Sorusu","Açıklama ve Gerekçe","Denetim Testi","Uygulama Notu"
+"${madde}","${rehberRef}","${soru}","${aciklama}","${prosedür}","${kanit}"`;
 
     try {
       await navigator.clipboard.writeText(content);
