@@ -256,7 +256,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                         className="ml-4 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2"
                       >
                         <Copy className="w-4 h-4" />
-                        {copySuccess ? 'Kopyalandı!' : 'Excel\'e Kopyala'}
+                        {copySuccess ? 'Kopyalama Başarılı' : 'Kopyala'}
                       </button>
                     </div>
                   </div>
