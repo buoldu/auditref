@@ -106,15 +106,27 @@ export default function TumVeri2Page() {
 
   const copyToClipboard = async () => {
     const csvContent = [
-      'Analiz Edilen Madde,İlişkili Rehber Maddesi,Kontrol Sorusu,Açıklama ve Gerekçe,Denetim Testi,Uygulama Notu',
+      'Analiz Edilen Madde\tİlişkili Rehber Maddesi\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu',
       ...filteredItems.map(item => {
-        const madde = item.madde || '';
-        const rehberRef = item.rehberRef || '';
-        const soru = item.soru || '';
-        const aciklama = item.aciklama || '';
-        const prosedür = item.prosedür || '';
-        const kanit = item.kanit || '';
-        return `"${madde}","${rehberRef}","${soru}","${aciklama}","${prosedür}","${kanit}"`
+        // Metin içindeki virgüller, yeni satırlar ve tab karakterlerini temizle
+        const cleanText = (text: string) => {
+          if (!text) return '';
+          return text
+            .replace(/\t/g, ' ') // Tab karakterlerini boşlukla değiştir
+            .replace(/\n/g, ' ') // Yeni satırları boşlukla değiştir
+            .replace(/\r/g, '') // Carriage return'ları temizle
+            .replace(/"/g, '""') // Çift tırnakları çift tırnakla değiştir (CSV standardı)
+            .trim();
+        };
+        
+        const madde = cleanText(item.madde);
+        const rehberRef = cleanText(item.rehberRef);
+        const soru = cleanText(item.soru);
+        const aciklama = cleanText(item.aciklama);
+        const prosedür = cleanText(item.prosedür);
+        const kanit = cleanText(item.kanit);
+        
+        return `"${madde}"\t"${rehberRef}"\t"${soru}"\t"${aciklama}"\t"${prosedür}"\t"${kanit}"`;
       })
     ].join('\n');
 
