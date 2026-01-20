@@ -13,7 +13,7 @@ interface SearchFilters {
   kanit: string;
 }
 
-export default function BasitListePage() {
+export default function BasitListe() {
   const [items, setItems] = useState<AuditItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -53,52 +53,6 @@ export default function BasitListePage() {
       newExpanded.add(id);
     }
     setExpandedItems(newExpanded);
-  };
-
-  const toggleSelection = (id: string) => {
-    const newSelected = new Set(selectedItems);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedItems(newSelected);
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedItems.size === filteredItems.length) {
-      setSelectedItems(new Set());
-    } else {
-      setSelectedItems(new Set(filteredItems.map(item => item.id)));
-    }
-  };
-
-  const exportToExcel = () => {
-    const selectedData = filteredItems.filter(item => selectedItems.has(item.id));
-    
-    if (selectedData.length === 0) {
-      alert('Lütfen dışa aktarmak için en az bir madde seçin.');
-      return;
-    }
-
-    // CSV formatında veri oluştur
-    const csvContent = [
-      'Analiz Edilen Madde,İlişkili Rehber Maddesi,Kontrol Sorusu,Açıklama ve Gerekçe,Denetim Testi (Prosedür),Uygulama Notu / Örnek Kanıt',
-      ...selectedData.map(item => 
-        `"${item.madde}","${item.rehberRef}","${item.soru}","${item.aciklama}","${item.prosedür}","${item.kanit}"`
-      )
-    ].join('\n');
-
-    // Blob oluştur ve indir
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `secilen_maddeler_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const filteredItems = items.filter(item => {
@@ -186,7 +140,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.madde}
                     onChange={(e) => setFilters({...filters, madde: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Madde ara..."
                   />
                 </div>
@@ -196,7 +150,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.rehberRef}
                     onChange={(e) => setFilters({...filters, rehberRef: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Rehber ara..."
                   />
                 </div>
@@ -206,7 +160,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.soru}
                     onChange={(e) => setFilters({...filters, soru: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Soru ara..."
                   />
                 </div>
@@ -216,7 +170,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.aciklama}
                     onChange={(e) => setFilters({...filters, aciklama: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Açıklama ara..."
                   />
                 </div>
@@ -226,7 +180,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.prosedür}
                     onChange={(e) => setFilters({...filters, prosedür: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Prosedür ara..."
                   />
                 </div>
@@ -236,7 +190,7 @@ export default function BasitListePage() {
                     type="text"
                     value={filters.kanit}
                     onChange={(e) => setFilters({...filters, kanit: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     placeholder="Kanıt ara..."
                   />
                 </div>
@@ -253,43 +207,7 @@ export default function BasitListePage() {
           )}
 
           {/* Seçim ve Dışa Aktarma Butonları */}
-          <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-slate-200">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={toggleSelectAll}
-                className="flex items-center space-x-2 text-sm text-slate-700 hover:text-slate-900"
-              >
-                {selectedItems.size === filteredItems.length && filteredItems.length > 0 ? (
-                  <CheckSquare className="h-4 w-4" />
-                ) : (
-                  <Square className="h-4 w-4" />
-                )}
-                <span>
-                  {selectedItems.size === filteredItems.length && filteredItems.length > 0 
-                    ? 'Tümünü Seçimi Kaldır' 
-                    : 'Tümünü Seç'}
-                </span>
-              </button>
-              {selectedItems.size > 0 && (
-                <span className="text-sm text-indigo-600 font-medium">
-                  {selectedItems.size} madde seçildi
-                </span>
-              )}
-            </div>
-            <button
-              onClick={exportToExcel}
-              disabled={selectedItems.size === 0}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedItems.size > 0
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-            >
-              <Download className="h-4 w-4" />
-              <span>Excel'e Aktar</span>
-            </button>
-          </div>
-
+          <div className="bg-white p-4 rounded-lg border border-slate-200">
           {(searchQuery || Object.values(filters).some(f => f !== '')) && (
             <p className="text-sm text-slate-600">
               {filteredItems.length} sonuç bulundu
@@ -309,24 +227,12 @@ export default function BasitListePage() {
             </div>
           ) : (
             filteredItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow overflow-hidden">
+              <div key={item.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg hover:ring-2 hover:ring-indigo-200 transition-all duration-200">
                 <div className="p-4">
                   <div className="flex items-start space-x-3">
-                    {/* Checkbox */}
-                    <button
-                      onClick={() => toggleSelection(item.id)}
-                      className="mt-1 flex-shrink-0"
-                    >
-                      {selectedItems.has(item.id) ? (
-                        <CheckSquare className="h-5 w-5 text-indigo-600" />
-                      ) : (
-                        <Square className="h-5 w-5 text-slate-400 hover:text-slate-600" />
-                      )}
-                    </button>
-
                     {/* Content */}
                     <div 
-                      className="flex-1 cursor-pointer hover:bg-slate-50 -m-2 p-2 rounded transition-colors"
+                      className="flex-1 cursor-pointer hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 -m-2 p-2 rounded-lg transition-all duration-200"
                       onClick={() => toggleExpanded(item.id)}
                     >
                       <div className="flex items-start justify-between">
@@ -356,19 +262,19 @@ export default function BasitListePage() {
                 </div>
 
                 {expandedItems.has(item.id) && (
-                  <div className="border-t border-slate-200 p-4 bg-slate-50">
+                  <div className="border-t border-slate-200 p-4 bg-gradient-to-br from-slate-50 to-indigo-50">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-medium text-slate-900 mb-2">Açıklama ve Gerekçe</h4>
-                        <p className="text-sm text-slate-600 leading-relaxed">{item.aciklama}</p>
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                        <h4 className="font-medium text-green-800 mb-2">Açıklama ve Gerekçe</h4>
+                        <p className="text-sm text-green-700 leading-relaxed">{item.aciklama}</p>
                       </div>
-                      <div>
-                        <h4 className="font-medium text-slate-900 mb-2">Denetim Testi (Prosedür)</h4>
-                        <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{item.prosedür}</p>
+                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+                        <h4 className="font-medium text-purple-800 mb-2">Denetim Testi (Prosedür)</h4>
+                        <p className="text-sm text-purple-700 leading-relaxed whitespace-pre-line">{item.prosedür}</p>
                       </div>
-                      <div className="lg:col-span-2">
-                        <h4 className="font-medium text-slate-900 mb-2">Uygulama Notu / Örnek Kanıt</h4>
-                        <p className="text-sm text-slate-600 leading-relaxed">{item.kanit}</p>
+                      <div className="lg:col-span-2 bg-gradient-to-r from-rose-50 to-red-50 p-4 rounded-lg border border-rose-200">
+                        <h4 className="font-medium text-rose-800 mb-2">Uygulama Notu / Örnek Kanıt</h4>
+                        <p className="text-sm text-rose-700 leading-relaxed">{item.kanit}</p>
                       </div>
                     </div>
                   </div>
@@ -376,6 +282,7 @@ export default function BasitListePage() {
               </div>
             ))
           )}
+        </div>
         </div>
       </div>
     </div>

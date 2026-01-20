@@ -86,6 +86,7 @@ export default function TumVeri2Page() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const [columnFilters, setColumnFilters] = useState({
     madde: '',
     rehberRef: '',
@@ -105,9 +106,22 @@ export default function TumVeri2Page() {
   const [initialScrollLeft, setInitialScrollLeft] = useState(0);
 
   const copyToClipboard = async () => {
+    const selectedData = filteredItems.filter(item => selectedItems.has(item.id));
+    
+    if (selectedData.length === 0) {
+      // Hiç seçim yoksa uyarı ver
+      alert('Lütfen kopyalamak için en az bir madde seçin.');
+      return;
+    }
+    
+    // Debug: konsola yazdır
+    console.log('Toplam filtrelenmiş:', filteredItems.length);
+    console.log('Seçili maddeler:', selectedData.length);
+    
+    // Sadece seçili maddeleri kopyala
     let content = 'Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu\n';
     
-    filteredItems.forEach(item => {
+    selectedData.forEach(item => {
       const madde = (item.madde || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const rehberRef = (item.rehberRef || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const soru = (item.soru || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
@@ -124,6 +138,24 @@ export default function TumVeri2Page() {
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error('Kopyalama başarısız:', err);
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedItems(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedItems.size === filteredItems.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(filteredItems.map(item => item.id)));
     }
   };
 
@@ -240,7 +272,7 @@ export default function TumVeri2Page() {
       <div className="max-w-7xl mx-auto">
         {/* Başlık */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Tüm Denetim Verileri 2</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Tüm Denetim Verileri</h1>
           <p className="text-sm sm:text-base text-slate-600">Gelişmiş tablo görünümü ve sıralama özellikleri</p>
         </div>
 
@@ -262,6 +294,11 @@ export default function TumVeri2Page() {
             <div className="flex items-center justify-center">
               <span className="text-sm text-slate-600">
                 {filteredItems.length} sonuç bulundu
+                {selectedItems.size > 0 && (
+                  <span className="ml-2 text-indigo-600 font-medium">
+                    ({selectedItems.size} seçili)
+                  </span>
+                )}
               </span>
               {filteredItems.length > 0 && (
                 <button
@@ -269,7 +306,7 @@ export default function TumVeri2Page() {
                   className="ml-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex items-center gap-2 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
-                  {copySuccess ? 'Kopyalandı!' : 'Sonuçları Kopyala'}
+                  {copySuccess ? 'Kopyalandı!' : (selectedItems.size > 0 ? `${selectedItems.size} Maddeleri Kopyala` : 'Seçimleri Kopyala')}
                 </button>
               )}
             </div>
@@ -283,7 +320,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.madde}
                 onChange={(e) => handleColumnFilter('madde', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -293,7 +330,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.rehberRef}
                 onChange={(e) => handleColumnFilter('rehberRef', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -303,7 +340,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.soru}
                 onChange={(e) => handleColumnFilter('soru', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -313,7 +350,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.aciklama}
                 onChange={(e) => handleColumnFilter('aciklama', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -323,7 +360,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.prosedür}
                 onChange={(e) => handleColumnFilter('prosedür', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -333,7 +370,7 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.kanit}
                 onChange={(e) => handleColumnFilter('kanit', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -343,10 +380,21 @@ export default function TumVeri2Page() {
         {/* Tablo */}
         <EnhancedTable>
           <div ref={tableRef} className="enhanced-scrollbar overflow-x-auto overflow-y-visible border border-slate-200 rounded-lg">
-            <table className="min-w-[1400px] w-full divide-y divide-slate-200">
+            <table className="min-w-full divide-y divide-slate-200">
               <thead className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
                 <tr className="border-b border-slate-200">
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[250px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[5%]">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.size === filteredItems.length && filteredItems.length > 0}
+                        onChange={toggleSelectAll}
+                        className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                      />
+                      <span>Seç</span>
+                    </div>
+                  </th>
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
                     <div className="flex items-center gap-2">
                       <span>Analiz Edilen Madde</span>
                       <button 
@@ -357,7 +405,7 @@ export default function TumVeri2Page() {
                       </button>
                     </div>
                   </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[300px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[13%]">
                     <div className="flex items-center gap-2">
                       <span>İlişkili Rehber</span>
                       <button 
@@ -368,7 +416,7 @@ export default function TumVeri2Page() {
                       </button>
                     </div>
                   </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
                     <div className="flex items-center gap-2">
                       <span>Kontrol Sorusu</span>
                       <button 
@@ -379,7 +427,7 @@ export default function TumVeri2Page() {
                       </button>
                     </div>
                   </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
                     <div className="flex items-center gap-2">
                       <span>Açıklama ve Gerekçe</span>
                       <button 
@@ -390,7 +438,7 @@ export default function TumVeri2Page() {
                       </button>
                     </div>
                   </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[400px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[14%]">
                     <div className="flex items-center gap-2">
                       <span>Denetim Testi</span>
                       <button 
@@ -401,7 +449,7 @@ export default function TumVeri2Page() {
                       </button>
                     </div>
                   </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider min-w-[350px]">
+                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[14%]">
                     <div className="flex items-center gap-2">
                       <span>Uygulama Notu</span>
                       <button 
@@ -415,66 +463,65 @@ export default function TumVeri2Page() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {/* Horizontal Slider Row */}
-                <tr>
-                  <td colSpan={6} className="p-0 bg-gradient-to-r from-slate-50 to-indigo-50 border-t border-slate-200">
-                    <div className="flex items-center justify-center py-3">
-                      <div className="flex items-center gap-4 w-full max-w-2xl">
-                        <div className="text-xs text-slate-600 font-medium whitespace-nowrap">
-                          Tabloyu sürükleyin:
-                        </div>
-                        <div 
-                          ref={sliderRef}
-                          className="flex-1 h-2 bg-slate-200 rounded-full relative cursor-grab active:cursor-grabbing"
-                          onMouseDown={handleMouseDown}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full opacity-50"></div>
-                          <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-indigo-500 rounded-full shadow-md"></div>
-                        </div>
-                        <div className="text-xs text-slate-500 whitespace-nowrap">
-                          Sürükle bırak
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
               {filteredItems.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     {searchQuery ? 'Arama kriterlerinize uygun sonuç bulunamadı.' : 'Gösterilecek veri bulunamadı.'}
                   </td>
                 </tr>
               ) : (
-                filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 transition-all duration-200">
-                    <td className="px-4 py-4 text-sm font-medium text-slate-900 align-top border-r border-slate-100">
-                      <div className="break-words leading-relaxed text-sm">
-                        {item.madde}
+                filteredItems.map((item, index) => (
+                  <tr key={item.id} className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 transition-all duration-200 align-top ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
+                  }`}>
+                    <td className="px-4 py-3 text-sm text-slate-600 align-middle border-r border-slate-100">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.has(item.id)}
+                        onChange={() => toggleSelection(item.id)}
+                        className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                      />
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-900 align-top border-r border-slate-100">
+                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.madde}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="break-words leading-relaxed text-sm">
-                        {item.rehberRef}
+                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
+                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.rehberRef}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="break-words leading-relaxed text-sm">
-                        {item.soru}
+                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
+                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.soru}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="break-words leading-relaxed max-h-32 overflow-y-auto cell-scrollbar text-sm">
-                        {item.aciklama}
+                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
+                      <div className="max-h-32 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.aciklama}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="break-words leading-relaxed max-h-32 overflow-y-auto cell-scrollbar text-sm whitespace-pre-line">
-                        {item.prosedür}
+                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
+                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.prosedür}
+                        </p>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-sm text-slate-600 align-top">
-                      <div className="break-words leading-relaxed max-h-32 overflow-y-auto cell-scrollbar text-sm">
-                        {item.kanit}
+                    <td className="px-4 py-3 text-sm text-slate-600 align-top">
+                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
+                        <p className="break-words leading-tight text-sm">
+                          {item.kanit}
+                        </p>
                       </div>
                     </td>
                   </tr>

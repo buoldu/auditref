@@ -45,17 +45,6 @@ export function Navigation() {
               Ana Sayfa
             </Link>
             <Link
-              href="/tum-veri"
-              className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                isActive('/tum-veri')
-                  ? 'border-indigo-500 text-slate-900'
-                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
-              }`}
-            >
-              <Database className="w-4 h-4 mr-2" />
-              Tüm Veri
-            </Link>
-            <Link
               href="/basit-liste"
               className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
                 isActive('/basit-liste')
@@ -67,15 +56,15 @@ export function Navigation() {
               Basit Liste
             </Link>
             <Link
-              href="/tum-veri-2"
+              href="/tum-veri"
               className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                isActive('/tum-veri-2')
+                isActive('/tum-veri')
                   ? 'border-indigo-500 text-slate-900'
                   : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
               }`}
             >
               <Database className="w-4 h-4 mr-2" />
-              Tüm Veri 2
+              Tüm Veri
             </Link>
           </div>
 
@@ -111,6 +100,18 @@ export function Navigation() {
                 Ana Sayfa
               </Link>
               <Link
+                href="/basit-liste"
+                onClick={closeMobileMenu}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/basit-liste')
+                    ? 'bg-indigo-50 text-indigo-700'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <List className="w-5 h-5 mr-2" />
+                Basit Liste
+              </Link>
+              <Link
                 href="/tum-veri"
                 onClick={closeMobileMenu}
                 className={`block px-3 py-2 rounded-md text-base font-medium ${
@@ -121,18 +122,6 @@ export function Navigation() {
               >
                 <Database className="w-5 h-5 mr-2" />
                 Tüm Veri
-              </Link>
-              <Link
-                href="/tum-veri-2"
-                onClick={closeMobileMenu}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  isActive('/tum-veri-2')
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : 'text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <Database className="w-5 h-5 mr-2" />
-                Tüm Veri 2
               </Link>
             </div>
           </div>
