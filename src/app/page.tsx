@@ -12,6 +12,29 @@ export default function Home() {
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showCopyDropdown, setShowCopyDropdown] = useState(false);
+  const [version, setVersion] = useState('0.1.1');
+  
+  // Geliştirme zaman damgası
+  const buildTimestamp = new Date().toLocaleString('tr-TR', { 
+    timeZone: 'Europe/Istanbul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  // Versiyonu artırma fonksiyonu
+  useEffect(() => {
+    const incrementVersion = () => {
+      const parts = version.split('.');
+      const patch = parseInt(parts[2]) + 1;
+      setVersion(`${parts[0]}.${parts[1]}.${patch}`);
+    };
+    
+    // Her build'te versiyonu artır
+    incrementVersion();
+  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -328,6 +351,20 @@ Uygulama Notu: ${selectedItem.kanit || ''}`;
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+      
+      {/* Geliştirme Zaman Damgası */}
+      <div className="fixed bottom-4 left-4 bg-slate-900/80 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span>Geliştirme: {buildTimestamp}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <span>Versiyon: v{version}</span>
           </div>
         </div>
       </div>
