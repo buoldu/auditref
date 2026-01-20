@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy, ChevronDown as DropdownIcon } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 export default function Home() {
@@ -11,7 +11,6 @@ export default function Home() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [showCopyDropdown, setShowCopyDropdown] = useState(false);
   const [version, setVersion] = useState('0.1.1');
   
   // Geliştirme zaman damgası
@@ -111,25 +110,6 @@ export default function Home() {
     }
   };
 
-  const copySelectedItem = async () => {
-    if (!selectedItem) return;
-    
-    const content = `Analiz Edilen Madde: ${selectedItem.madde || ''}
-İlişkili Rehber: ${selectedItem.rehberRef || ''}
-Kontrol Sorusu: ${selectedItem.soru || ''}
-Açıklama ve Gerekçe: ${selectedItem.aciklama || ''}
-Denetim Testi: ${selectedItem.prosedür || ''}
-Uygulama Notu: ${selectedItem.kanit || ''}`;
-
-    try {
-      await navigator.clipboard.writeText(content);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error('Kopyalama başarısız:', err);
-    }
-  };
-
   const copyAsTable = async () => {
     if (!selectedItem) return;
     
@@ -152,7 +132,6 @@ Uygulama Notu: ${selectedItem.kanit || ''}`;
     try {
       await navigator.clipboard.writeText(content);
       setCopySuccess(true);
-      setShowCopyDropdown(false);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error('Kopyalama başarısız:', err);
@@ -278,32 +257,12 @@ Uygulama Notu: ${selectedItem.kanit || ''}`;
                     </div>
                     <div className="relative">
                       <button
-                        onClick={() => setShowCopyDropdown(!showCopyDropdown)}
+                        onClick={copyAsTable}
                         className="ml-4 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2"
                       >
                         <Copy className="w-4 h-4" />
-                        {copySuccess ? 'Kopyalandı!' : 'Kopyala'}
-                        <DropdownIcon className="w-3 h-3" />
+                        {copySuccess ? 'Kopyalandı!' : 'Excel\'e Kopyala'}
                       </button>
-                      
-                      {showCopyDropdown && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-10">
-                          <button
-                            onClick={copySelectedItem}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
-                          >
-                            <Copy className="w-4 h-4" />
-                            Metin olarak kopyala
-                          </button>
-                          <button
-                            onClick={copyAsTable}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
-                          >
-                            <Copy className="w-4 h-4" />
-                            Tablo olarak kopyala
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
