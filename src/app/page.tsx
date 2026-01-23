@@ -11,29 +11,17 @@ export default function Home() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [version, setVersion] = useState('0.1.2');
-  
-  // Geliştirme zaman damgası
-  const buildTimestamp = new Date().toLocaleString('tr-TR', { 
-    timeZone: 'Europe/Istanbul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  // Versiyonu artırma fonksiyonu
-  useEffect(() => {
-    const incrementVersion = () => {
-      const parts = version.split('.');
-      const patch = parseInt(parts[2]) + 1;
-      setVersion(`${parts[0]}.${parts[1]}.${patch}`);
-    };
-    
-    // Her build'te versiyonu artır
-    incrementVersion();
-  }, []);
+  const version = process.env.NEXT_PUBLIC_APP_VERSION ?? '0.1.2';
+  const buildTimestamp = process.env.NEXT_PUBLIC_BUILD_TIME
+    ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString('tr-TR', {
+        timeZone: 'Europe/Istanbul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : 'Bilinmiyor';
 
   useEffect(() => {
     const loadData = async () => {
