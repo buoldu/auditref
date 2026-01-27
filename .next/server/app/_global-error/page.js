@@ -1,0 +1,11 @@
+var R=require("../../chunks/ssr/[turbopack]_runtime.js")("server/app/_global-error/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__809437fe._.js")
+R.c("server/chunks/ssr/projeler_alleyes_auditref_b5c5b58d._.js")
+R.c("server/chunks/ssr/c69ba_next_dist_2b835dec._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__11a75008._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__3c6c4807._.js")
+R.c("server/chunks/ssr/c69ba_next_dist_96947beb._.js")
+R.c("server/chunks/ssr/projeler_alleyes_auditref_src_app_3c11ad34._.js")
+R.c("server/chunks/ssr/d0169_alleyes_auditref__next-internal_server_app__global-error_page_actions_db7f8149.js")
+R.m(64525)
+module.exports=R.m(64525).exports

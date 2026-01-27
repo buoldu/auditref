@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/tum-veri/layout,_N_T_/tum-veri/page,_N_T_/tum-veri"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/tum-veri/__PAGE__",
+    "/tum-veri",
+    "/_index",
+    "/_head"
+  ]
+}
