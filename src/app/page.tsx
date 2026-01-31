@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy, BookOpen, Scale, Users, AlertCircle, TrendingUp, FileCheck, Archive } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 export default function Home() {
@@ -11,33 +11,12 @@ export default function Home() {
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [version, setVersion] = useState('0.1.2');
   
-  // Geliştirme zaman damgası
-  const buildTimestamp = new Date().toLocaleString('tr-TR', { 
-    timeZone: 'Europe/Istanbul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  // Versiyonu artırma fonksiyonu
-  useEffect(() => {
-    const incrementVersion = () => {
-      const parts = version.split('.');
-      const patch = parseInt(parts[2]) + 1;
-      setVersion(`${parts[0]}.${parts[1]}.${patch}`);
-    };
-    
-    // Her build'te versiyonu artır
-    incrementVersion();
-  }, []);
-
+  
   useEffect(() => {
     const loadData = async () => {
       try {
+        setLoading(true);
         await auditDataService.loadData();
         const allItems = auditDataService.getAllData();
         setItems(allItems);
@@ -65,12 +44,12 @@ export default function Home() {
     const grouped: { [key: string]: AuditItem[] } = {};
     
     items.forEach(item => {
-      // Ana kategoriyi belirle (ilk kelime veya ilk cümle)
-      const category = item.madde.split(' ')[0] || item.madde.substring(0, 20);
-      if (!grouped[category]) {
-        grouped[category] = [];
+      // Mevzuat adını doğrudan kullan
+      const mevzuat = item.mevzuat || 'Diğer';
+      if (!grouped[mevzuat]) {
+        grouped[mevzuat] = [];
       }
-      grouped[category].push(item);
+      grouped[mevzuat].push(item);
     });
 
     return grouped;
@@ -80,17 +59,18 @@ export default function Home() {
     const grouped = getGroupedItems();
     const filtered: { [key: string]: AuditItem[] } = {};
 
-    Object.keys(grouped).forEach(category => {
+    Object.keys(grouped).forEach(mevzuat => {
       if (searchQuery.trim() === '') {
-        filtered[category] = grouped[category];
+        filtered[mevzuat] = grouped[mevzuat];
       } else {
-        const categoryItems = grouped[category].filter(item =>
+        const mevzuatItems = grouped[mevzuat].filter(item =>
+          item.mevzuat.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.madde.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.rehberRef.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.soru.toLowerCase().includes(searchQuery.toLowerCase())
         );
-        if (categoryItems.length > 0) {
-          filtered[category] = categoryItems;
+        if (mevzuatItems.length > 0) {
+          filtered[mevzuat] = mevzuatItems;
         }
       }
     });
@@ -98,15 +78,27 @@ export default function Home() {
     return filtered;
   };
 
-  const getCategoryIcon = (category: string) => {
-    if (category.toLowerCase().includes('alacak') || category.toLowerCase().includes('kredi')) {
-      return <Building2 className="h-5 w-5 text-indigo-600" />;
-    } else if (category.toLowerCase().includes('denetim') || category.toLowerCase().includes('kontrol')) {
-      return <Shield className="h-5 w-5 text-green-600" />;
-    } else if (category.toLowerCase().includes('süreç') || category.toLowerCase().includes('yönetim')) {
-      return <CheckCircle className="h-5 w-5 text-blue-600" />;
+  const getCategoryIcon = (mevzuat: string) => {
+    const iconClass = "h-5 w-5";
+    
+    if (mevzuat.toLowerCase().includes('banka') || mevzuat.toLowerCase().includes('kart')) {
+      return <Building2 className={`${iconClass} text-indigo-600`} />;
+    } else if (mevzuat.toLowerCase().includes('sistem') || mevzuat.toLowerCase().includes('sermaye')) {
+      return <Shield className={`${iconClass} text-green-600`} />;
+    } else if (mevzuat.toLowerCase().includes('faizsiz') || mevzuat.toLowerCase().includes('teblig')) {
+      return <BookOpen className={`${iconClass} text-blue-600`} />;
+    } else if (mevzuat.toLowerCase().includes('finansal') || mevzuat.toLowerCase().includes('borc')) {
+      return <TrendingUp className={`${iconClass} text-purple-600`} />;
+    } else if (mevzuat.toLowerCase().includes('kredi') || mevzuat.toLowerCase().includes('rehber')) {
+      return <FileCheck className={`${iconClass} text-orange-600`} />;
+    } else if (mevzuat.toLowerCase().includes('sorunlu') || mevzuat.toLowerCase().includes('alacak')) {
+      return <AlertCircle className={`${iconClass} text-red-600`} />;
+    } else if (mevzuat.toLowerCase().includes('yönetmelik')) {
+      return <Scale className={`${iconClass} text-teal-600`} />;
+    } else if (mevzuat.toLowerCase().includes('kanun')) {
+      return <Users className={`${iconClass} text-cyan-600`} />;
     } else {
-      return <FileText className="h-5 w-5 text-slate-600" />;
+      return <Archive className={`${iconClass} text-slate-600`} />;
     }
   };
 
@@ -193,31 +185,31 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                     <p className="text-slate-500">Sonuç bulunamadı</p>
                   </div>
                 ) : (
-                  Object.keys(groupedItems).map((category) => (
-                    <div key={category} className="border-b border-slate-100 last:border-b-0">
+                  Object.keys(groupedItems).map((mevzuat) => (
+                    <div key={mevzuat} className="border-b border-slate-100 last:border-b-0">
                       <button
-                        onClick={() => toggleCategory(category)}
+                        onClick={() => toggleCategory(mevzuat)}
                         className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
                       >
                         <div className="flex items-center space-x-3">
-                          {getCategoryIcon(category)}
+                          {getCategoryIcon(mevzuat)}
                           <div className="text-left">
-                            <p className="font-medium text-slate-900">{category}</p>
+                            <p className="font-medium text-slate-900">{mevzuat}</p>
                             <p className="text-xs text-slate-500">
-                              {groupedItems[category].length} madde
+                              {groupedItems[mevzuat].length} madde
                             </p>
                           </div>
                         </div>
-                        {expandedCategories.has(category) ? (
+                        {expandedCategories.has(mevzuat) ? (
                           <ChevronDown className="h-4 w-4 text-slate-400" />
                         ) : (
                           <ChevronRight className="h-4 w-4 text-slate-400" />
                         )}
                       </button>
                       
-                      {expandedCategories.has(category) && (
+                      {expandedCategories.has(mevzuat) && (
                         <div className="bg-slate-50 px-4 py-2 space-y-1">
-                          {groupedItems[category].map((item) => (
+                          {groupedItems[mevzuat].map((item) => (
                             <button
                               key={item.id}
                               onClick={() => setSelectedItem(item)}
@@ -249,6 +241,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                     <div className="flex-1">
                       <h3 className="text-xl font-semibold text-white">{selectedItem.madde}</h3>
                       <p className="text-indigo-100 mt-2">{selectedItem.rehberRef}</p>
+                      <p className="text-indigo-100 text-sm mt-1">{selectedItem.mevzuat}</p>
                     </div>
                     <div className="relative">
                       <button
@@ -309,19 +302,6 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
         </div>
       </div>
       
-      {/* Geliştirme Zaman Damgası */}
-      <div className="fixed bottom-4 left-4 bg-slate-900/80 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Geliştirme: {buildTimestamp}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <span>Versiyon: v{version}</span>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

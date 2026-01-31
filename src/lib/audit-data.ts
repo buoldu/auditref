@@ -3,6 +3,7 @@ import Fuse from 'fuse.js';
 
 export interface AuditItem {
   id: string;
+  mevzuat: string;
   madde: string;
   rehberRef: string;
   soru: string;
@@ -12,7 +13,7 @@ export interface AuditItem {
 }
 
 export interface GroupedAuditItems {
-  [madde: string]: AuditItem[];
+  [mevzuat: string]: AuditItem[];
 }
 
 export class AuditDataService {
@@ -21,7 +22,7 @@ export class AuditDataService {
 
   constructor() {
     this.fuse = new Fuse([], {
-      keys: ['madde', 'rehberRef', 'soru', 'aciklama', 'prosedür', 'kanit'],
+      keys: ['mevzuat', 'madde', 'rehberRef', 'soru', 'aciklama', 'prosedür', 'kanit'],
       threshold: 0.4, // Make search a bit more fuzzy
       includeScore: true,
       ignoreLocation: true, // Search the entire string
@@ -43,16 +44,33 @@ export class AuditDataService {
         skipEmptyLines: true,
       });
 
-      this.data = parseResult.data.map((row: any, index: number) => ({
-        id: `audit-${index}`,
-        madde: row['Analiz Edilen Madde'] || '',
-        rehberRef: row['İlişkili Rehber Maddesi (Yerel / Uluslararası)'] || '',
-        soru: row['Kontrol Sorusu'] || '',
-        aciklama: row['Açıklama ve Gerekçe'] || '',
-        prosedür: row['Denetim Testi (Prosedür)'] || '',
-        kanit: row['Uygulama Notu / Örnek Kanıt'] || '',
-      })).filter((item: AuditItem) => item.madde.trim() !== '');
+      // Veriyi parça parça işle
+      const rawData = parseResult.data;
+      const batchSize = 100;
+      const processedData: AuditItem[] = [];
 
+      for (let i = 0; i < rawData.length; i += batchSize) {
+        const batch = rawData.slice(i, i + batchSize);
+        const batchData = batch.map((row: any, index: number) => ({
+          id: `audit-${i + index}`,
+          mevzuat: row['Mevuzat'] || '',
+          madde: row['Analiz Edilen Madde'] || row['Analiz Edilen Madde (Yönetmelik Metni)'] || '',
+          rehberRef: row['İlişkili Rehber Maddesi (Yerel / Uluslararası)'] || '',
+          soru: row['Kontrol Sorusu'] || '',
+          aciklama: row['Açıklama ve Gerekçe'] || '',
+          prosedür: row['Denetim Testi (Prosedür)'] || '',
+          kanit: row['Uygulama Notu / Örnek Kanıt'] || '',
+        })).filter((item: any) => item.madde.trim() !== '');
+        
+        processedData.push(...batchData);
+        
+        // Küçük bir gecikme ile UI'ı bloklamamak için
+        if (i % (batchSize * 5) === 0) {
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+      }
+
+      this.data = processedData;
       this.fuse.setCollection(this.data);
     } catch (error) {
       console.error('CSV yüklenemedi, örnek veriler kullanılıyor:', error);
@@ -64,6 +82,7 @@ export class AuditDataService {
     this.data = [
       {
         id: 'audit-0',
+        mevzuat: 'Örnek Mevzuat',
         madde: 'Alacak Takip Süreci',
         rehberRef: 'TS 5000 Madde 12',
         soru: 'Alacak takip süreci yasal gerekliliklere uygun mu?',
@@ -73,6 +92,7 @@ export class AuditDataService {
       },
       {
         id: 'audit-1',
+        mevzuat: 'Örnek Mevzuat',
         madde: 'Müşteri Bilgileri',
         rehberRef: 'KVKK Madde 6',
         soru: 'Müşteri bilgileri gizlilik ilkesine uygun mu?',
@@ -82,6 +102,7 @@ export class AuditDataService {
       },
       {
         id: 'audit-2',
+        mevzuat: 'Örnek Mevzuat',
         madde: 'Sözleşme Yönetimi',
         rehberRef: 'Borçlar Kanunu Madde 125',
         soru: 'Sözleşmeler yasal gerekliliklere uygun mu?',
@@ -99,16 +120,16 @@ export class AuditDataService {
 
   getGroupedData(): GroupedAuditItems {
     return this.data.reduce((groups: GroupedAuditItems, item) => {
-      if (!groups[item.madde]) {
-        groups[item.madde] = [];
+      if (!groups[item.mevzuat]) {
+        groups[item.mevzuat] = [];
       }
-      groups[item.madde].push(item);
+      groups[item.mevzuat].push(item);
       return groups;
     }, {});
   }
 
-  getUniqueMaddeler(): string[] {
-    return [...new Set(this.data.map(item => item.madde))];
+  getUniqueMevzuat(): string[] {
+    return [...new Set(this.data.map(item => item.mevzuat))];
   }
 
   search(query: string): AuditItem[] {
@@ -118,8 +139,8 @@ export class AuditDataService {
     return results.map(result => result.item);
   }
 
-  getItemsByMadde(madde: string): AuditItem[] {
-    return this.data.filter(item => item.madde === madde);
+  getItemsByMevzuat(mevzuat: string): AuditItem[] {
+    return this.data.filter(item => item.mevzuat === mevzuat);
   }
 
   getItemById(id: string): AuditItem | undefined {
