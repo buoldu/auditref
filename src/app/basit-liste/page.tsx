@@ -205,14 +205,6 @@ export default function BasitListe() {
               </div>
             </div>
           )}
-
-          {/* Seçim ve Dışa Aktarma Butonları */}
-          <div className="bg-white p-4 rounded-lg border border-slate-200">
-          {(searchQuery || Object.values(filters).some(f => f !== '')) && (
-            <p className="text-sm text-slate-600">
-              {filteredItems.length} sonuç bulundu
-            </p>
-          )}
         </div>
 
         {/* Liste */}
@@ -282,7 +274,6 @@ export default function BasitListe() {
               </div>
             ))
           )}
-        </div>
         </div>
       </div>
     </div>

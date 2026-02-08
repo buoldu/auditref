@@ -24,6 +24,7 @@ class AuditDataService {
     constructor(){
         this.fuse = new __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$fuse$2e$js$2f$dist$2f$fuse$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"]([], {
             keys: [
+                'mevzuat',
                 'madde',
                 'rehberRef',
                 'soru',
@@ -49,15 +50,29 @@ class AuditDataService {
                 header: true,
                 skipEmptyLines: true
             });
-            this.data = parseResult.data.map((row, index)=>({
-                    id: `audit-${index}`,
-                    madde: row['Analiz Edilen Madde'] || '',
-                    rehberRef: row['İlişkili Rehber Maddesi (Yerel / Uluslararası)'] || '',
-                    soru: row['Kontrol Sorusu'] || '',
-                    aciklama: row['Açıklama ve Gerekçe'] || '',
-                    prosedür: row['Denetim Testi (Prosedür)'] || '',
-                    kanit: row['Uygulama Notu / Örnek Kanıt'] || ''
-                })).filter((item)=>item.madde.trim() !== '');
+            // Veriyi parça parça işle
+            const rawData = parseResult.data;
+            const batchSize = 100;
+            const processedData = [];
+            for(let i = 0; i < rawData.length; i += batchSize){
+                const batch = rawData.slice(i, i + batchSize);
+                const batchData = batch.map((row, index)=>({
+                        id: `audit-${i + index}`,
+                        mevzuat: row['Mevuzat'] || '',
+                        madde: row['Analiz Edilen Madde'] || row['Analiz Edilen Madde (Yönetmelik Metni)'] || '',
+                        rehberRef: row['İlişkili Rehber Maddesi (Yerel / Uluslararası)'] || '',
+                        soru: row['Kontrol Sorusu'] || '',
+                        aciklama: row['Açıklama ve Gerekçe'] || '',
+                        prosedür: row['Denetim Testi (Prosedür)'] || '',
+                        kanit: row['Uygulama Notu / Örnek Kanıt'] || ''
+                    })).filter((item)=>item.madde.trim() !== '');
+                processedData.push(...batchData);
+                // Küçük bir gecikme ile UI'ı bloklamamak için
+                if (i % (batchSize * 5) === 0) {
+                    await new Promise((resolve)=>setTimeout(resolve, 0));
+                }
+            }
+            this.data = processedData;
             this.fuse.setCollection(this.data);
         } catch (error) {
             console.error('CSV yüklenemedi, örnek veriler kullanılıyor:', error);
@@ -68,6 +83,7 @@ class AuditDataService {
         this.data = [
             {
                 id: 'audit-0',
+                mevzuat: 'Örnek Mevzuat',
                 madde: 'Alacak Takip Süreci',
                 rehberRef: 'TS 5000 Madde 12',
                 soru: 'Alacak takip süreci yasal gerekliliklere uygun mu?',
@@ -77,6 +93,7 @@ class AuditDataService {
             },
             {
                 id: 'audit-1',
+                mevzuat: 'Örnek Mevzuat',
                 madde: 'Müşteri Bilgileri',
                 rehberRef: 'KVKK Madde 6',
                 soru: 'Müşteri bilgileri gizlilik ilkesine uygun mu?',
@@ -86,6 +103,7 @@ class AuditDataService {
             },
             {
                 id: 'audit-2',
+                mevzuat: 'Örnek Mevzuat',
                 madde: 'Sözleşme Yönetimi',
                 rehberRef: 'Borçlar Kanunu Madde 125',
                 soru: 'Sözleşmeler yasal gerekliliklere uygun mu?',
@@ -101,16 +119,16 @@ class AuditDataService {
     }
     getGroupedData() {
         return this.data.reduce((groups, item)=>{
-            if (!groups[item.madde]) {
-                groups[item.madde] = [];
+            if (!groups[item.mevzuat]) {
+                groups[item.mevzuat] = [];
             }
-            groups[item.madde].push(item);
+            groups[item.mevzuat].push(item);
             return groups;
         }, {});
     }
-    getUniqueMaddeler() {
+    getUniqueMevzuat() {
         return [
-            ...new Set(this.data.map((item)=>item.madde))
+            ...new Set(this.data.map((item)=>item.mevzuat))
         ];
     }
     search(query) {
@@ -118,8 +136,8 @@ class AuditDataService {
         const results = this.fuse.search(query);
         return results.map((result)=>result.item);
     }
-    getItemsByMadde(madde) {
-        return this.data.filter((item)=>item.madde === madde);
+    getItemsByMevzuat(mevzuat) {
+        return this.data.filter((item)=>item.mevzuat === mevzuat);
     }
     getItemById(id) {
         return this.data.find((item)=>item.id === id);
@@ -142,8 +160,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$audit
 var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/file-text.js [app-ssr] (ecmascript) <export default as FileText>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/building-2.js [app-ssr] (ecmascript) <export default as Building2>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/shield.js [app-ssr] (ecmascript) <export default as Shield>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2d$big$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/circle-check-big.js [app-ssr] (ecmascript) <export default as CheckCircle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/copy.js [app-ssr] (ecmascript) <export default as Copy>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$book$2d$open$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__BookOpen$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/book-open.js [app-ssr] (ecmascript) <export default as BookOpen>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$scale$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Scale$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/scale.js [app-ssr] (ecmascript) <export default as Scale>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$users$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Users$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/users.js [app-ssr] (ecmascript) <export default as Users>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/circle-alert.js [app-ssr] (ecmascript) <export default as AlertCircle>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/trending-up.js [app-ssr] (ecmascript) <export default as TrendingUp>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileCheck$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/file-check.js [app-ssr] (ecmascript) <export default as FileCheck>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$archive$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Archive$3e$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/node_modules/lucide-react/dist/esm/icons/archive.js [app-ssr] (ecmascript) <export default as Archive>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$src$2f$lib$2f$audit$2d$data$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/projeler/alleyes/auditref/src/lib/audit-data.ts [app-ssr] (ecmascript)");
 'use client';
 ;
@@ -157,29 +181,10 @@ function Home() {
     const [expandedCategories, setExpandedCategories] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Set());
     const [selectedItem, setSelectedItem] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [copySuccess, setCopySuccess] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [version, setVersion] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('0.1.2');
-    // Geliştirme zaman damgası
-    const buildTimestamp = new Date().toLocaleString('tr-TR', {
-        timeZone: 'Europe/Istanbul',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    // Versiyonu artırma fonksiyonu
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const incrementVersion = ()=>{
-            const parts = version.split('.');
-            const patch = parseInt(parts[2]) + 1;
-            setVersion(`${parts[0]}.${parts[1]}.${patch}`);
-        };
-        // Her build'te versiyonu artır
-        incrementVersion();
-    }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const loadData = async ()=>{
             try {
+                setLoading(true);
                 await __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$src$2f$lib$2f$audit$2d$data$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["auditDataService"].loadData();
                 const allItems = __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$src$2f$lib$2f$audit$2d$data$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["auditDataService"].getAllData();
                 setItems(allItems);
@@ -203,61 +208,102 @@ function Home() {
     const getGroupedItems = ()=>{
         const grouped = {};
         items.forEach((item)=>{
-            // Ana kategoriyi belirle (ilk kelime veya ilk cümle)
-            const category = item.madde.split(' ')[0] || item.madde.substring(0, 20);
-            if (!grouped[category]) {
-                grouped[category] = [];
+            // Mevzuat adını doğrudan kullan
+            const mevzuat = item.mevzuat || 'Diğer';
+            if (!grouped[mevzuat]) {
+                grouped[mevzuat] = [];
             }
-            grouped[category].push(item);
+            grouped[mevzuat].push(item);
         });
         return grouped;
     };
     const filteredGroupedItems = ()=>{
         const grouped = getGroupedItems();
         const filtered = {};
-        Object.keys(grouped).forEach((category)=>{
+        Object.keys(grouped).forEach((mevzuat)=>{
             if (searchQuery.trim() === '') {
-                filtered[category] = grouped[category];
+                filtered[mevzuat] = grouped[mevzuat];
             } else {
-                const categoryItems = grouped[category].filter((item)=>item.madde.toLowerCase().includes(searchQuery.toLowerCase()) || item.rehberRef.toLowerCase().includes(searchQuery.toLowerCase()) || item.soru.toLowerCase().includes(searchQuery.toLowerCase()));
-                if (categoryItems.length > 0) {
-                    filtered[category] = categoryItems;
+                const mevzuatItems = grouped[mevzuat].filter((item)=>item.mevzuat.toLowerCase().includes(searchQuery.toLowerCase()) || item.madde.toLowerCase().includes(searchQuery.toLowerCase()) || item.rehberRef.toLowerCase().includes(searchQuery.toLowerCase()) || item.soru.toLowerCase().includes(searchQuery.toLowerCase()));
+                if (mevzuatItems.length > 0) {
+                    filtered[mevzuat] = mevzuatItems;
                 }
             }
         });
         return filtered;
     };
-    const getCategoryIcon = (category)=>{
-        if (category.toLowerCase().includes('alacak') || category.toLowerCase().includes('kredi')) {
+    const getCategoryIcon = (mevzuat)=>{
+        const iconClass = "h-5 w-5";
+        if (mevzuat.toLowerCase().includes('banka') || mevzuat.toLowerCase().includes('kart')) {
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$building$2d$2$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Building2$3e$__["Building2"], {
-                className: "h-5 w-5 text-indigo-600"
+                className: `${iconClass} text-indigo-600`
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 103,
+                lineNumber: 85,
                 columnNumber: 14
             }, this);
-        } else if (category.toLowerCase().includes('denetim') || category.toLowerCase().includes('kontrol')) {
+        } else if (mevzuat.toLowerCase().includes('sistem') || mevzuat.toLowerCase().includes('sermaye')) {
             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
-                className: "h-5 w-5 text-green-600"
+                className: `${iconClass} text-green-600`
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 105,
+                lineNumber: 87,
                 columnNumber: 14
             }, this);
-        } else if (category.toLowerCase().includes('süreç') || category.toLowerCase().includes('yönetim')) {
-            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2d$big$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle$3e$__["CheckCircle"], {
-                className: "h-5 w-5 text-blue-600"
+        } else if (mevzuat.toLowerCase().includes('faizsiz') || mevzuat.toLowerCase().includes('teblig')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$book$2d$open$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__BookOpen$3e$__["BookOpen"], {
+                className: `${iconClass} text-blue-600`
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 107,
+                lineNumber: 89,
+                columnNumber: 14
+            }, this);
+        } else if (mevzuat.toLowerCase().includes('finansal') || mevzuat.toLowerCase().includes('borc')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$trending$2d$up$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__TrendingUp$3e$__["TrendingUp"], {
+                className: `${iconClass} text-purple-600`
+            }, void 0, false, {
+                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                lineNumber: 91,
+                columnNumber: 14
+            }, this);
+        } else if (mevzuat.toLowerCase().includes('kredi') || mevzuat.toLowerCase().includes('rehber')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileCheck$3e$__["FileCheck"], {
+                className: `${iconClass} text-orange-600`
+            }, void 0, false, {
+                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                lineNumber: 93,
+                columnNumber: 14
+            }, this);
+        } else if (mevzuat.toLowerCase().includes('sorunlu') || mevzuat.toLowerCase().includes('alacak')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
+                className: `${iconClass} text-red-600`
+            }, void 0, false, {
+                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                lineNumber: 95,
+                columnNumber: 14
+            }, this);
+        } else if (mevzuat.toLowerCase().includes('yönetmelik')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$scale$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Scale$3e$__["Scale"], {
+                className: `${iconClass} text-teal-600`
+            }, void 0, false, {
+                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                lineNumber: 97,
+                columnNumber: 14
+            }, this);
+        } else if (mevzuat.toLowerCase().includes('kanun')) {
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$users$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Users$3e$__["Users"], {
+                className: `${iconClass} text-cyan-600`
+            }, void 0, false, {
+                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                lineNumber: 99,
                 columnNumber: 14
             }, this);
         } else {
-            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__["FileText"], {
-                className: "h-5 w-5 text-slate-600"
+            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$archive$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Archive$3e$__["Archive"], {
+                className: `${iconClass} text-slate-600`
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 109,
+                lineNumber: 101,
                 columnNumber: 14
             }, this);
         }
@@ -291,7 +337,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                         className: "animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"
                     }, void 0, false, {
                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                        lineNumber: 140,
+                        lineNumber: 132,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -299,18 +345,18 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                         children: "Yükleniyor..."
                     }, void 0, false, {
                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                        lineNumber: 141,
+                        lineNumber: 133,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 139,
+                lineNumber: 131,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-            lineNumber: 138,
+            lineNumber: 130,
             columnNumber: 7
         }, this);
     }
@@ -332,7 +378,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                         children: "AuditRef"
                                     }, void 0, false, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 156,
+                                        lineNumber: 148,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -340,13 +386,13 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                         children: "Denetim Referans Aracı"
                                     }, void 0, false, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 157,
+                                        lineNumber: 149,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                lineNumber: 155,
+                                lineNumber: 147,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -360,12 +406,12 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 className: "h-5 w-5 text-slate-400"
                                             }, void 0, false, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 162,
+                                                lineNumber: 154,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 161,
+                                            lineNumber: 153,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -376,34 +422,34 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                             placeholder: "Madde, rehber veya soruda ara..."
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 164,
+                                            lineNumber: 156,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 160,
+                                    lineNumber: 152,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                lineNumber: 159,
+                                lineNumber: 151,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                        lineNumber: 154,
+                        lineNumber: 146,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                    lineNumber: 153,
+                    lineNumber: 145,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 152,
+                lineNumber: 144,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -424,7 +470,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 children: "Kategoriler"
                                             }, void 0, false, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 184,
+                                                lineNumber: 176,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -435,13 +481,13 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 185,
+                                                lineNumber: 177,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 183,
+                                        lineNumber: 175,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -453,80 +499,80 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 children: "Sonuç bulunamadı"
                                             }, void 0, false, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 193,
+                                                lineNumber: 185,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 192,
+                                            lineNumber: 184,
                                             columnNumber: 19
-                                        }, this) : Object.keys(groupedItems).map((category)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        }, this) : Object.keys(groupedItems).map((mevzuat)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "border-b border-slate-100 last:border-b-0",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>toggleCategory(category),
+                                                        onClick: ()=>toggleCategory(mevzuat),
                                                         className: "w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 className: "flex items-center space-x-3",
                                                                 children: [
-                                                                    getCategoryIcon(category),
+                                                                    getCategoryIcon(mevzuat),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                         className: "text-left",
                                                                         children: [
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                 className: "font-medium text-slate-900",
-                                                                                children: category
+                                                                                children: mevzuat
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                                lineNumber: 205,
+                                                                                lineNumber: 197,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                                 className: "text-xs text-slate-500",
                                                                                 children: [
-                                                                                    groupedItems[category].length,
+                                                                                    groupedItems[mevzuat].length,
                                                                                     " madde"
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                                lineNumber: 206,
+                                                                                lineNumber: 198,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                        lineNumber: 204,
+                                                                        lineNumber: 196,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                lineNumber: 202,
+                                                                lineNumber: 194,
                                                                 columnNumber: 25
                                                             }, this),
-                                                            expandedCategories.has(category) ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
+                                                            expandedCategories.has(mevzuat) ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronDown$3e$__["ChevronDown"], {
                                                                 className: "h-4 w-4 text-slate-400"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                lineNumber: 212,
+                                                                lineNumber: 204,
                                                                 columnNumber: 27
                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                                                 className: "h-4 w-4 text-slate-400"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                lineNumber: 214,
+                                                                lineNumber: 206,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 198,
+                                                        lineNumber: 190,
                                                         columnNumber: 23
                                                     }, this),
-                                                    expandedCategories.has(category) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    expandedCategories.has(mevzuat) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "bg-slate-50 px-4 py-2 space-y-1",
-                                                        children: groupedItems[category].map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        children: groupedItems[mevzuat].map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                 onClick: ()=>setSelectedItem(item),
                                                                 className: `w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${selectedItem?.id === item.id ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-slate-600 hover:bg-white hover:text-slate-900'}`,
                                                                 children: [
@@ -535,7 +581,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                                         children: item.madde
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                        lineNumber: 230,
+                                                                        lineNumber: 222,
                                                                         columnNumber: 31
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -543,40 +589,40 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                                         children: item.rehberRef
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                        lineNumber: 231,
+                                                                        lineNumber: 223,
                                                                         columnNumber: 31
                                                                     }, this)
                                                                 ]
                                                             }, item.id, true, {
                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                lineNumber: 221,
+                                                                lineNumber: 213,
                                                                 columnNumber: 29
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 219,
+                                                        lineNumber: 211,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
-                                            }, category, true, {
+                                            }, mevzuat, true, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 197,
+                                                lineNumber: 189,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 190,
+                                        lineNumber: 182,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                lineNumber: 182,
+                                lineNumber: 174,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                            lineNumber: 181,
+                            lineNumber: 173,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -597,7 +643,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                             children: selectedItem.madde
                                                         }, void 0, false, {
                                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                            lineNumber: 250,
+                                                            lineNumber: 242,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -605,13 +651,21 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                             children: selectedItem.rehberRef
                                                         }, void 0, false, {
                                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                            lineNumber: 251,
+                                                            lineNumber: 243,
+                                                            columnNumber: 23
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            className: "text-indigo-100 text-sm mt-1",
+                                                            children: selectedItem.mevzuat
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                                                            lineNumber: 244,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                    lineNumber: 249,
+                                                    lineNumber: 241,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -624,30 +678,30 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                                 className: "w-4 h-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                                lineNumber: 258,
+                                                                lineNumber: 251,
                                                                 columnNumber: 25
                                                             }, this),
                                                             copySuccess ? 'Kopyalama Başarılı' : 'Kopyala'
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 254,
+                                                        lineNumber: 247,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                    lineNumber: 253,
+                                                    lineNumber: 246,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 248,
+                                            lineNumber: 240,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 247,
+                                        lineNumber: 239,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -660,7 +714,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                         children: "Kontrol Sorusu"
                                                     }, void 0, false, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 267,
+                                                        lineNumber: 260,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -668,6 +722,37 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                             className: "text-slate-700",
                                                             children: selectedItem.soru
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                                                            lineNumber: 262,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                                                        lineNumber: 261,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                                                lineNumber: 259,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
+                                                        className: "text-lg font-medium text-slate-900 mb-3",
+                                                        children: "Açıklama ve Gerekçe"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
+                                                        lineNumber: 267,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "bg-blue-50 rounded-lg p-4",
+                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            className: "text-slate-700 leading-relaxed",
+                                                            children: selectedItem.aciklama
                                                         }, void 0, false, {
                                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                             lineNumber: 269,
@@ -688,17 +773,17 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
                                                         className: "text-lg font-medium text-slate-900 mb-3",
-                                                        children: "Açıklama ve Gerekçe"
+                                                        children: "Denetim Testi (Prosedür)"
                                                     }, void 0, false, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                         lineNumber: 274,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "bg-blue-50 rounded-lg p-4",
+                                                        className: "bg-green-50 rounded-lg p-4",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-slate-700 leading-relaxed",
-                                                            children: selectedItem.aciklama
+                                                            className: "text-slate-700 leading-relaxed whitespace-pre-line",
+                                                            children: selectedItem.prosedür
                                                         }, void 0, false, {
                                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                             lineNumber: 276,
@@ -719,17 +804,17 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
                                                         className: "text-lg font-medium text-slate-900 mb-3",
-                                                        children: "Denetim Testi (Prosedür)"
+                                                        children: "Uygulama Notu / Örnek Kanıt"
                                                     }, void 0, false, {
                                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                         lineNumber: 281,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "bg-green-50 rounded-lg p-4",
+                                                        className: "bg-amber-50 rounded-lg p-4",
                                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-slate-700 leading-relaxed whitespace-pre-line",
-                                                            children: selectedItem.prosedür
+                                                            className: "text-slate-700 leading-relaxed",
+                                                            children: selectedItem.kanit
                                                         }, void 0, false, {
                                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                             lineNumber: 283,
@@ -745,48 +830,17 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
                                                 lineNumber: 280,
                                                 columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
-                                                        className: "text-lg font-medium text-slate-900 mb-3",
-                                                        children: "Uygulama Notu / Örnek Kanıt"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 288,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "bg-amber-50 rounded-lg p-4",
-                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            className: "text-slate-700 leading-relaxed",
-                                                            children: selectedItem.kanit
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                            lineNumber: 290,
-                                                            columnNumber: 23
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                        lineNumber: 289,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 287,
-                                                columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                        lineNumber: 265,
+                                        lineNumber: 258,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                lineNumber: 246,
+                                lineNumber: 238,
                                 columnNumber: 15
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center",
@@ -799,12 +853,12 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                                 className: "h-8 w-8 text-indigo-600"
                                             }, void 0, false, {
                                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                                lineNumber: 299,
+                                                lineNumber: 292,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 298,
+                                            lineNumber: 291,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -812,7 +866,7 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                             children: "Denetim Madde Seçimi"
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 301,
+                                            lineNumber: 294,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -820,108 +874,40 @@ ${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
                                             children: "Sol taraftan bir kategori seçip ardından detaylarını görüntülemek istediğiniz maddeye tıklayın."
                                         }, void 0, false, {
                                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                            lineNumber: 302,
+                                            lineNumber: 295,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 297,
+                                    lineNumber: 290,
                                     columnNumber: 17
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                lineNumber: 296,
+                                lineNumber: 289,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                            lineNumber: 244,
+                            lineNumber: 236,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                    lineNumber: 179,
+                    lineNumber: 171,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 178,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "fixed bottom-4 left-4 bg-slate-900/80 text-white text-xs px-3 py-2 rounded-lg backdrop-blur-sm",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "flex flex-col gap-1",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex items-center gap-2",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "w-2 h-2 bg-green-400 rounded-full animate-pulse"
-                                }, void 0, false, {
-                                    fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 316,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    children: [
-                                        "Geliştirme: ",
-                                        buildTimestamp
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 317,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                            lineNumber: 315,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "flex items-center gap-2",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "w-2 h-2 bg-blue-400 rounded-full"
-                                }, void 0, false, {
-                                    fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 320,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$projeler$2f$alleyes$2f$auditref$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    children: [
-                                        "Versiyon: v",
-                                        version
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                                    lineNumber: 321,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                            lineNumber: 319,
-                            columnNumber: 11
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                    lineNumber: 314,
-                    columnNumber: 9
-                }, this)
-            }, void 0, false, {
-                fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-                lineNumber: 313,
+                lineNumber: 170,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/projeler/alleyes/auditref/src/app/page.tsx",
-        lineNumber: 150,
+        lineNumber: 142,
         columnNumber: 5
     }, this);
 }

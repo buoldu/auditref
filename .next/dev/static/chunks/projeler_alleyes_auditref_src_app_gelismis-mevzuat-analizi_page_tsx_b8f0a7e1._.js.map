@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/akif/projeler/alleyes/auditref/src/app/gelismis-mevzuat-analizi/page.tsx"],"sourcesContent":["'use client';\n\nexport default function GelismisMevzuatAnalizi() {\n  return (\n    <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }}>\n      <iframe \n        src=\"/mevzuat-analiz.html\" \n        style={{ \n          width: '100%', \n          height: '100%', \n          border: 'none',\n          display: 'block'\n        }}\n        title=\"Mevzuat Analiz Paneli\"\n      />\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AAEe,SAAS;IACtB,qBACE,gOAAC;QAAI,OAAO;YAAE,OAAO;YAAS,QAAQ;YAAS,QAAQ;YAAG,SAAS;YAAG,UAAU;QAAS;kBACvF,cAAA,gOAAC;YACC,KAAI;YACJ,OAAO;gBACL,OAAO;gBACP,QAAQ;gBACR,QAAQ;gBACR,SAAS;YACX;YACA,OAAM;;;;;;;;;;;AAId;KAfwB"}}]
+}

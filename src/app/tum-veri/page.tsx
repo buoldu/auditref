@@ -21,7 +21,7 @@ const sortedData = (items: AuditItem[], sortConfig: { key: keyof AuditItem | nul
     });
   };
 
-const EnhancedTable = ({ children }: { children: React.ReactNode }) => {
+const VirtualizedTable = ({ children }: { children: React.ReactNode }) => {
   const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
   const [scrollContent, setScrollContent] = useState<HTMLDivElement | null>(null);
 
@@ -64,6 +64,24 @@ const EnhancedTable = ({ children }: { children: React.ReactNode }) => {
         scrollbar-width: thin !important;
         scrollbar-color: #cbd5e1 #f8fafc !important;
       }
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .line-clamp-4 {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -80,6 +98,139 @@ const EnhancedTable = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CSSProperties; data: any }) => {
+  const { filteredItems, selectedItems, toggleSelection, expandedRows, toggleRowExpansion } = data;
+  const item = filteredItems[index];
+  const isExpanded = expandedRows.has(item.id);
+  
+  return (
+    <div className={`border-b border-slate-200 ${
+      index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
+    } hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 transition-all duration-200`}>
+      {/* Main row */}
+      <div className="flex items-stretch">
+        {/* Checkbox cell */}
+        <div className="w-[5%] px-3 py-4 text-sm text-slate-600 flex items-center border-r border-slate-100">
+          <input
+            type="checkbox"
+            checked={selectedItems.has(item.id)}
+            onChange={() => toggleSelection(item.id)}
+            className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 flex-shrink-0"
+          />
+        </div>
+        
+        {/* Madde cell - Clickable */}
+        <div 
+          className="w-[12%] px-3 py-4 text-sm font-medium text-slate-900 flex items-start border-r border-slate-100 cursor-pointer hover:bg-indigo-50 transition-colors"
+          onClick={() => toggleRowExpansion(item.id)}
+        >
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.madde}
+            </p>
+            <span className="text-xs text-indigo-600 mt-1 block">
+              {isExpanded ? 'Daralt ▲' : 'Genişlet ▼'}
+            </span>
+          </div>
+        </div>
+        
+        {/* Rehber cell */}
+        <div className="w-[15%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.rehberRef}
+            </p>
+          </div>
+        </div>
+        
+        {/* Soru cell */}
+        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.soru}
+            </p>
+          </div>
+        </div>
+        
+        {/* Açıklama cell */}
+        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.aciklama}
+            </p>
+          </div>
+        </div>
+        
+        {/* Prosedür cell */}
+        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.prosedür}
+            </p>
+          </div>
+        </div>
+        
+        {/* Kanıt cell */}
+        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 flex items-start">
+          <div className="w-full">
+            <p className="break-words leading-relaxed text-sm line-clamp-2">
+              {item.kanit}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Expanded content */}
+      {isExpanded && (
+        <div className="bg-gradient-to-r from-indigo-50 to-slate-50 border-l-4 border-indigo-400 px-6 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Analiz Edilen Madde</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.madde}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">İlişkili Rehber</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.rehberRef}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kontrol Sorusu</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.soru}
+                </p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Açıklama ve Gerekçe</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.aciklama}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Denetim Testi (Prosedür)</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.prosedür}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Uygulama Notu / Örnek Kanıt</h4>
+                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                  {item.kanit}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function TumVeri2Page() {
   const [items, setItems] = useState<AuditItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<AuditItem[]>([]);
@@ -87,6 +238,7 @@ export default function TumVeri2Page() {
   const [loading, setLoading] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [columnFilters, setColumnFilters] = useState({
     madde: '',
     rehberRef: '',
@@ -139,6 +291,16 @@ export default function TumVeri2Page() {
     } catch (err) {
       console.error('Kopyalama başarısız:', err);
     }
+  };
+
+  const toggleRowExpansion = (id: string) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
   };
 
   const toggleSelection = (id: string) => {
@@ -378,159 +540,116 @@ export default function TumVeri2Page() {
         </div>
 
         {/* Tablo */}
-        <EnhancedTable>
-          <div ref={tableRef} className="enhanced-scrollbar overflow-x-auto overflow-y-visible border border-slate-200 rounded-lg">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
-                <tr className="border-b border-slate-200">
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[5%]">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.size === filteredItems.length && filteredItems.length > 0}
-                        onChange={toggleSelectAll}
-                        className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
-                      />
-                      <span>Seç</span>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
-                    <div className="flex items-center gap-2">
-                      <span>Analiz Edilen Madde</span>
-                      <button 
-                        onClick={() => handleSort('madde')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[13%]">
-                    <div className="flex items-center gap-2">
-                      <span>İlişkili Rehber</span>
-                      <button 
-                        onClick={() => handleSort('rehberRef')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
-                    <div className="flex items-center gap-2">
-                      <span>Kontrol Sorusu</span>
-                      <button 
-                        onClick={() => handleSort('soru')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[18%]">
-                    <div className="flex items-center gap-2">
-                      <span>Açıklama ve Gerekçe</span>
-                      <button 
-                        onClick={() => handleSort('aciklama')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[14%]">
-                    <div className="flex items-center gap-2">
-                      <span>Denetim Testi</span>
-                      <button 
-                        onClick={() => handleSort('prosedür')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                  <th className="px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider w-[14%]">
-                    <div className="flex items-center gap-2">
-                      <span>Uygulama Notu</span>
-                      <button 
-                        onClick={() => handleSort('kanit')}
-                        className="p-1 hover:bg-slate-200 rounded transition-colors"
-                      >
-                        <ArrowUpDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-slate-200">
-              {filteredItems.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    {searchQuery ? 'Arama kriterlerinize uygun sonuç bulunamadı.' : 'Gösterilecek veri bulunamadı.'}
-                  </td>
-                </tr>
-              ) : (
-                filteredItems.map((item, index) => (
-                  <tr key={item.id} className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 transition-all duration-200 align-top ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
-                  }`}>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-middle border-r border-slate-100">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.has(item.id)}
-                        onChange={() => toggleSelection(item.id)}
-                        className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
-                      />
-                    </td>
-                    <td className="px-4 py-3 text-sm font-medium text-slate-900 align-top border-r border-slate-100">
-                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.madde}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.rehberRef}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.soru}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="max-h-32 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.aciklama}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-top border-r border-slate-100">
-                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.prosedür}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-600 align-top">
-                      <div className="max-h-24 overflow-y-auto cell-scrollbar">
-                        <p className="break-words leading-tight text-sm">
-                          {item.kanit}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <VirtualizedTable>
+          <div className="border border-slate-200 rounded-lg">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
+              <div className="flex items-stretch border-b border-slate-200">
+                <div className="w-[5%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.size === filteredItems.length && filteredItems.length > 0}
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                    />
+                    <span>Seç</span>
+                  </div>
+                </div>
+                <div className="w-[12%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Analiz Edilen Madde</span>
+                    <button 
+                      onClick={() => handleSort('madde')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[15%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>İlişkili Rehber</span>
+                    <button 
+                      onClick={() => handleSort('rehberRef')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Kontrol Sorusu</span>
+                    <button 
+                      onClick={() => handleSort('soru')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Açıklama ve Gerekçe</span>
+                    <button 
+                      onClick={() => handleSort('aciklama')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Denetim Testi</span>
+                    <button 
+                      onClick={() => handleSort('prosedür')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Uygulama Notu</span>
+                    <button 
+                      onClick={() => handleSort('kanit')}
+                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Virtualized Body */}
+            {filteredItems.length === 0 ? (
+              <div className="px-6 py-12 text-center text-slate-500">
+                {searchQuery ? 'Arama kriterlerinize uygun sonuç bulunamadı.' : 'Gösterilecek veri bulunamadı.'}
+              </div>
+            ) : (
+              <div className="enhanced-scrollbar overflow-y-auto" style={{ height: '600px' }}>
+                {filteredItems.map((item, index) => (
+                  <VirtualizedRow
+                    key={item.id}
+                    index={index}
+                    style={{}}
+                    data={{
+                      filteredItems,
+                      selectedItems,
+                      expandedRows,
+                      toggleSelection,
+                      toggleRowExpansion
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </EnhancedTable>
+        </VirtualizedTable>
       </div>
     </div>
   );
