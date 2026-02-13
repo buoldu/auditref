@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/gelismis-mevzuat-analizi/layout,_N_T_/gelismis-mevzuat-analizi/page,_N_T_/gelismis-mevzuat-analizi"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/gelismis-mevzuat-analizi/__PAGE__",
+    "/gelismis-mevzuat-analizi",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -53,16 +53,16 @@
       "namedRegex": "^/favicon\\.ico(?:/)?$"
     },
     {
+      "page": "/gelismis-mevzuat-analizi",
+      "regex": "^/gelismis\\-mevzuat\\-analizi(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/gelismis\\-mevzuat\\-analizi(?:/)?$"
+    },
+    {
       "page": "/tum-veri",
       "regex": "^/tum\\-veri(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/tum\\-veri(?:/)?$"
-    },
-    {
-      "page": "/tum-veri-2",
-      "regex": "^/tum\\-veri\\-2(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/tum\\-veri\\-2(?:/)?$"
     }
   ],
   "dataRoutes": [],

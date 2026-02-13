@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navigation } from "@/components/Navigation";
+import { AppLayout } from "@/components/layout/app-layout";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "AuditRef - Denetim Referans Aracı",
-  description: "Profesyonel Denetim Referans Aracı",
+  title: "AuditRef - Denetim Referans Sistemi",
+  description: "Profesyonel Denetim ve Mevzuat Referans Sistemi",
 };
 
 export default function RootLayout({
@@ -24,12 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navigation />
-        {children}
+    <html lang="tr" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );

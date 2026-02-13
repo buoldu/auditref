@@ -1,8 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronRight, Filter, Download, CheckSquare, Square } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, Filter, X } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface SearchFilters {
   madde: string;
@@ -91,190 +95,209 @@ export default function BasitListe() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Yükleniyor...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Başlık */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Gelişmiş Veri Listesi</h1>
-          <p className="text-slate-600">Detaylı arama, filtreleme ve seçme ile verileri keşfedin</p>
-        </div>
+    <div className="space-y-6">
+      {/* Başlık */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Gelişmiş Veri Listesi</h1>
+        <p className="text-slate-600 dark:text-slate-400">Detaylı arama, filtreleme ve seçme ile verileri keşfedin</p>
+      </div>
 
-        {/* Arama Barı */}
-        <div className="mb-6 space-y-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-slate-400" />
+      {/* Arama Barı */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-20"
+                placeholder="Tüm başlıklarda ara..."
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+                className="absolute right-2 top-1/2 -translate-y-1/2"
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Filtreler
+              </Button>
             </div>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-10 pr-20 py-3 border border-slate-300 rounded-lg bg-white placeholder-slate-500 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="Tüm başlıklarda ara..."
-            />
-            <button
-              onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-              className="absolute inset-y-0 right-0 px-3 flex items-center text-indigo-600 hover:text-indigo-800"
-            >
-              <Filter className="h-5 w-5" />
-            </button>
+
+            {/* Gelişmiş Arama */}
+            {showAdvancedSearch && (
+              <div className="pt-4 border-t">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">Gelişmiş Filtreler</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAdvancedSearch(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Analiz Edilen Madde</label>
+                    <Input
+                      type="text"
+                      value={filters.madde}
+                      onChange={(e) => setFilters({...filters, madde: e.target.value})}
+                      placeholder="Madde ara..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Rehber Maddesi</label>
+                    <Input
+                      type="text"
+                      value={filters.rehberRef}
+                      onChange={(e) => setFilters({...filters, rehberRef: e.target.value})}
+                      placeholder="Rehber ara..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Kontrol Sorusu</label>
+                    <Input
+                      type="text"
+                      value={filters.soru}
+                      onChange={(e) => setFilters({...filters, soru: e.target.value})}
+                      placeholder="Soru ara..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Açıklama</label>
+                    <Input
+                      type="text"
+                      value={filters.aciklama}
+                      onChange={(e) => setFilters({...filters, aciklama: e.target.value})}
+                      placeholder="Açıklama ara..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Denetim Testi</label>
+                    <Input
+                      type="text"
+                      value={filters.prosedür}
+                      onChange={(e) => setFilters({...filters, prosedür: e.target.value})}
+                      placeholder="Prosedür ara..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Uygulama Notu</label>
+                    <Input
+                      type="text"
+                      value={filters.kanit}
+                      onChange={(e) => setFilters({...filters, kanit: e.target.value})}
+                      placeholder="Kanıt ara..."
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearFilters}
+                  >
+                    Filtreleri Temizle
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Gelişmiş Arama */}
-          {showAdvancedSearch && (
-            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Analiz Edilen Madde</label>
-                  <input
-                    type="text"
-                    value={filters.madde}
-                    onChange={(e) => setFilters({...filters, madde: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Madde ara..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Rehber Maddesi</label>
-                  <input
-                    type="text"
-                    value={filters.rehberRef}
-                    onChange={(e) => setFilters({...filters, rehberRef: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Rehber ara..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Kontrol Sorusu</label>
-                  <input
-                    type="text"
-                    value={filters.soru}
-                    onChange={(e) => setFilters({...filters, soru: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Soru ara..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Açıklama</label>
-                  <input
-                    type="text"
-                    value={filters.aciklama}
-                    onChange={(e) => setFilters({...filters, aciklama: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Açıklama ara..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Denetim Testi</label>
-                  <input
-                    type="text"
-                    value={filters.prosedür}
-                    onChange={(e) => setFilters({...filters, prosedür: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Prosedür ara..."
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Uygulama Notu</label>
-                  <input
-                    type="text"
-                    value={filters.kanit}
-                    onChange={(e) => setFilters({...filters, kanit: e.target.value})}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="Kanıt ara..."
-                  />
-                </div>
-              </div>
-              <div className="mt-4 flex justify-between">
-                <button
-                  onClick={clearFilters}
-                  className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800"
-                >
-                  Temizle
-                </button>
-              </div>
-            </div>
-          )}
+      {/* Sonuç Sayısı */}
+      {filteredItems.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-medium text-slate-900 dark:text-slate-100">{filteredItems.length}</span> sonuç bulundu
+          </p>
         </div>
+      )}
 
-        {/* Liste */}
-        <div className="space-y-4">
-          {filteredItems.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
-              <p className="text-slate-500">
+      {/* Liste */}
+      <div className="space-y-4">
+        {filteredItems.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-slate-500 dark:text-slate-400">
                 {(searchQuery || Object.values(filters).some(f => f !== '')) 
                   ? 'Arama kriterlerinize uygun sonuç bulunamadı.' 
                   : 'Gösterilecek veri bulunamadı.'}
               </p>
-            </div>
-          ) : (
-            filteredItems.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg hover:ring-2 hover:ring-indigo-200 transition-all duration-200">
-                <div className="p-4">
-                  <div className="flex items-start space-x-3">
-                    {/* Content */}
-                    <div 
-                      className="flex-1 cursor-pointer hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 -m-2 p-2 rounded-lg transition-all duration-200"
-                      onClick={() => toggleExpanded(item.id)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-slate-900 mb-2">{item.madde}</h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="font-medium text-slate-700">Rehber:</span>
-                              <p className="text-slate-600">{item.rehberRef}</p>
-                            </div>
-                            <div>
-                              <span className="font-medium text-slate-700">Soru:</span>
-                              <p className="text-slate-600">{item.soru}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="ml-4 flex items-center">
-                          {expandedItems.has(item.id) ? (
-                            <ChevronDown className="h-5 w-5 text-slate-400" />
-                          ) : (
-                            <ChevronRight className="h-5 w-5 text-slate-400" />
-                          )}
-                        </div>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredItems.map((item) => (
+            <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <CardHeader 
+                className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                onClick={() => toggleExpanded(item.id)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-lg">{item.madde}</CardTitle>
+                      <Badge variant="outline" className="ml-2">
+                        {item.mevzuat}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">Rehber:</span>
+                        <p className="text-slate-600 dark:text-slate-400 mt-1">{item.rehberRef}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">Soru:</span>
+                        <p className="text-slate-600 dark:text-slate-400 mt-1">{item.soru}</p>
                       </div>
                     </div>
                   </div>
+                  <Button variant="ghost" size="sm" className="ml-4">
+                    {expandedItems.has(item.id) ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
+              </CardHeader>
 
-                {expandedItems.has(item.id) && (
-                  <div className="border-t border-slate-200 p-4 bg-gradient-to-br from-slate-50 to-indigo-50">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                        <h4 className="font-medium text-green-800 mb-2">Açıklama ve Gerekçe</h4>
-                        <p className="text-sm text-green-700 leading-relaxed">{item.aciklama}</p>
-                      </div>
-                      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
-                        <h4 className="font-medium text-purple-800 mb-2">Denetim Testi (Prosedür)</h4>
-                        <p className="text-sm text-purple-700 leading-relaxed whitespace-pre-line">{item.prosedür}</p>
-                      </div>
-                      <div className="lg:col-span-2 bg-gradient-to-r from-rose-50 to-red-50 p-4 rounded-lg border border-rose-200">
-                        <h4 className="font-medium text-rose-800 mb-2">Uygulama Notu / Örnek Kanıt</h4>
-                        <p className="text-sm text-rose-700 leading-relaxed">{item.kanit}</p>
-                      </div>
+              {expandedItems.has(item.id) && (
+                <CardContent className="pt-6 space-y-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Açıklama ve Gerekçe</h4>
+                      <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">{item.aciklama}</p>
+                    </div>
+                    <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
+                      <h4 className="font-medium text-purple-900 dark:text-purple-100 mb-2">Denetim Testi (Prosedür)</h4>
+                      <p className="text-sm text-purple-700 dark:text-purple-300 leading-relaxed whitespace-pre-line">{item.prosedür}</p>
+                    </div>
+                    <div className="lg:col-span-2 p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                      <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2">Uygulama Notu / Örnek Kanıt</h4>
+                      <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">{item.kanit}</p>
                     </div>
                   </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+                </CardContent>
+              )}
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );

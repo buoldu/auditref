@@ -1,0 +1,3 @@
+module.exports=[46071,a=>{"use strict";var b=a.i(59047);function c(){return(0,b.jsx)("div",{style:{width:"100vw",height:"100vh",margin:0,padding:0,overflow:"hidden"},children:(0,b.jsx)("iframe",{src:"/mevzuat-analiz.html",style:{width:"100%",height:"100%",border:"none",display:"block"},title:"Mevzuat Analiz Paneli"})})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=projeler_alleyes_auditref_src_app_gelismis-mevzuat-analizi_page_tsx_57d32fba._.js.map

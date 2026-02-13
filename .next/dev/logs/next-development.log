@@ -1,115 +1,13 @@
-[00:00:00.402] Server  LOG     ✓ Ready in 271ms
-[00:00:05.286] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:14.916] Browser WARN    Duplicate headers found and renamed.
-[00:00:14.916] Browser WARN    Duplicate headers found and renamed.
-[00:00:18.899] Browser WARN    Duplicate headers found and renamed.
-[00:00:18.899] Browser WARN    Duplicate headers found and renamed.
-[00:00:19.744] Browser WARN    Duplicate headers found and renamed.
-[00:00:19.744] Browser WARN    Duplicate headers found and renamed.
-[00:00:23.359] Browser WARN    Duplicate headers found and renamed.
-[00:00:23.359] Browser WARN    Duplicate headers found and renamed.
-[00:03:03.365] Server  LOG     ✓ Compiled in 81ms
-[00:03:03.586] Browser ERROR   uncaughtError: ReferenceError: searchQuery is not defined
-[00:03:11.273] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:25.243] Browser WARN    Duplicate headers found and renamed.
-[00:03:25.243] Browser WARN    Duplicate headers found and renamed.
-[00:03:26.910] Browser WARN    Duplicate headers found and renamed.
-[00:03:26.910] Browser WARN    Duplicate headers found and renamed.
-[00:03:29.143] Browser WARN    Duplicate headers found and renamed.
-[00:03:29.143] Browser WARN    Duplicate headers found and renamed.
-[00:03:32.891] Browser WARN    Duplicate headers found and renamed.
-[00:03:32.892] Browser WARN    Duplicate headers found and renamed.
-[00:04:12.751] Server  LOG     ✓ Compiled in 98ms
-[00:04:35.125] Browser WARN    Duplicate headers found and renamed.
-[00:04:35.125] Browser WARN    Duplicate headers found and renamed.
-[00:04:55.657] Browser WARN    Duplicate headers found and renamed.
-[00:04:55.657] Browser WARN    Duplicate headers found and renamed.
-[00:08:43.231] Server  LOG     ✓ Compiled in 65ms
-[00:08:46.980] Browser WARN    Duplicate headers found and renamed.
-[00:08:49.410] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:08:52.336] Browser WARN    Duplicate headers found and renamed.
-[00:08:52.336] Browser WARN    Duplicate headers found and renamed.
-[00:08:56.589] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:10:46.772] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:46.911] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.222] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.343] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.497] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.628] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.824] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:47.964] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:10:48.079] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:01.506] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:11:01.647] Browser WARN    Duplicate headers found and renamed.
-[00:11:03.112] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:03.226] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:03.392] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:03.520] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:03.606] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:39.457] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:39.577] Server  ERROR   ⨯ Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:11:39.666] Browser ERROR   uncaughtError: Error: The default export is not a React Component in "/gelismis-mevzuat-analizi/page"
-[00:13:55.747] Server  LOG     ✓ Compiled in 24ms
-[00:13:56.183] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:14:17.819] Browser WARN    Duplicate headers found and renamed.
-[00:14:17.819] Browser WARN    Duplicate headers found and renamed.
-[00:15:22.861] Browser WARN    Duplicate headers found and renamed.
-[00:15:22.862] Browser WARN    Duplicate headers found and renamed.
-[00:15:24.166] Browser WARN    Duplicate headers found and renamed.
-[00:15:24.167] Browser WARN    Duplicate headers found and renamed.
-[00:15:25.063] Browser WARN    Duplicate headers found and renamed.
-[00:15:25.063] Browser WARN    Duplicate headers found and renamed.
-[00:15:26.988] Browser WARN    Duplicate headers found and renamed.
-[00:15:26.988] Browser WARN    Duplicate headers found and renamed.
-[00:15:28.417] Browser WARN    Duplicate headers found and renamed.
-[00:15:28.417] Browser WARN    Duplicate headers found and renamed.
-[00:16:30.300] Browser WARN    Duplicate headers found and renamed.
-[00:16:30.300] Browser WARN    Duplicate headers found and renamed.
-[00:16:31.780] Browser WARN    Duplicate headers found and renamed.
-[00:16:31.780] Browser WARN    Duplicate headers found and renamed.
-[00:16:38.980] Browser WARN    Duplicate headers found and renamed.
-[00:16:38.980] Browser WARN    Duplicate headers found and renamed.
-[00:16:53.727] Browser WARN    Duplicate headers found and renamed.
-[00:16:53.734] Browser WARN    Duplicate headers found and renamed.
-[00:16:57.229] Browser WARN    Duplicate headers found and renamed.
-[00:16:57.229] Browser WARN    Duplicate headers found and renamed.
-[00:17:34.442] Browser WARN    Duplicate headers found and renamed.
-[00:17:34.442] Browser WARN    Duplicate headers found and renamed.
-[00:17:35.878] Browser WARN    Duplicate headers found and renamed.
-[00:17:35.878] Browser WARN    Duplicate headers found and renamed.
-[00:17:38.671] Browser WARN    Duplicate headers found and renamed.
-[00:17:38.671] Browser WARN    Duplicate headers found and renamed.
-[00:17:40.842] Browser WARN    Duplicate headers found and renamed.
-[00:17:40.843] Browser WARN    Duplicate headers found and renamed.
-[00:18:21.527] Server  LOG     ✓ Compiled in 66ms
-[00:18:22.587] Browser ERROR   ./projeler/alleyes/auditref/src/app/basit-liste/page.tsx:280:6
-Parsing ecmascript source code failed
-  278 |         </div>
-  279 |       </div>
-> 280 |     </div>
-      |      ^^^^^
-  281 |   );
-  282 | }
-  283 |
-
-Unterminated regexp literal
-[00:18:31.404] Server  LOG     ✓ Compiled in 30ms
-[00:18:31.621] Server  LOG     ✓ Compiled in 0ms
-[00:18:31.806] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:18:32.587] Browser WARN    Duplicate headers found and renamed.
-[00:18:40.481] Browser WARN    Duplicate headers found and renamed.
-[00:18:40.481] Browser WARN    Duplicate headers found and renamed.
-[00:18:45.794] Browser WARN    Duplicate headers found and renamed.
-[00:18:45.794] Browser WARN    Duplicate headers found and renamed.
-[00:19:10.467] Browser WARN    Duplicate headers found and renamed.
-[00:19:10.467] Browser WARN    Duplicate headers found and renamed.
-[00:19:15.024] Browser WARN    Duplicate headers found and renamed.
-[00:19:15.024] Browser WARN    Duplicate headers found and renamed.
-[00:19:16.665] Browser WARN    Duplicate headers found and renamed.
-[00:19:16.665] Browser WARN    Duplicate headers found and renamed.
-[00:19:23.076] Browser WARN    Duplicate headers found and renamed.
-[00:19:23.076] Browser WARN    Duplicate headers found and renamed.
-[00:19:30.361] Browser WARN    Duplicate headers found and renamed.
-[00:19:30.361] Browser WARN    Duplicate headers found and renamed.
-[00:19:50.297] Browser LOG     Toplam filtrelenmiş: 801
-[00:19:50.297] Browser LOG     Seçili maddeler: 801
+[00:00:00.866] Server  LOG     ✓ Ready in 623ms
+[00:00:13.478] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:13.646] Browser WARN    Duplicate headers found and renamed.
+[00:00:27.824] Browser WARN    Duplicate headers found and renamed.
+[00:00:27.824] Browser WARN    Duplicate headers found and renamed.
+[00:00:29.660] Browser WARN    Duplicate headers found and renamed.
+[00:00:29.660] Browser WARN    Duplicate headers found and renamed.
+[00:00:35.087] Browser WARN    Duplicate headers found and renamed.
+[00:00:35.087] Browser WARN    Duplicate headers found and renamed.
+[00:01:38.944] Server  WARN    ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[00:01:38.960] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:39.151] Browser WARN    Duplicate headers found and renamed.

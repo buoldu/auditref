@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronRight, FileText, Building2, Shield, CheckCircle, Copy, BookOpen, Scale, Users, AlertCircle, TrendingUp, FileCheck, Archive } from 'lucide-react';
+import { FileText, Table, Network, TrendingUp, AlertCircle, Clock, ArrowRight } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 export default function Home() {
   const [items, setItems] = useState<AuditItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
-  const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
-  const [copySuccess, setCopySuccess] = useState(false);
   
   
   useEffect(() => {
@@ -30,278 +30,197 @@ export default function Home() {
     loadData();
   }, []);
 
-  const toggleCategory = (category: string) => {
-    const newExpanded = new Set(expandedCategories);
-    if (newExpanded.has(category)) {
-      newExpanded.delete(category);
-    } else {
-      newExpanded.add(category);
-    }
-    setExpandedCategories(newExpanded);
+  const stats = {
+    totalRegulations: items.length,
+    totalCategories: new Set(items.map(item => item.mevzuat)).size,
+    lastUpdate: new Date().toLocaleDateString('tr-TR'),
   };
 
-  const getGroupedItems = () => {
-    const grouped: { [key: string]: AuditItem[] } = {};
-    
-    items.forEach(item => {
-      // Mevzuat adını doğrudan kullan
-      const mevzuat = item.mevzuat || 'Diğer';
-      if (!grouped[mevzuat]) {
-        grouped[mevzuat] = [];
-      }
-      grouped[mevzuat].push(item);
-    });
-
-    return grouped;
-  };
-
-  const filteredGroupedItems = () => {
-    const grouped = getGroupedItems();
-    const filtered: { [key: string]: AuditItem[] } = {};
-
-    Object.keys(grouped).forEach(mevzuat => {
-      if (searchQuery.trim() === '') {
-        filtered[mevzuat] = grouped[mevzuat];
-      } else {
-        const mevzuatItems = grouped[mevzuat].filter(item =>
-          item.mevzuat.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.madde.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.rehberRef.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.soru.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (mevzuatItems.length > 0) {
-          filtered[mevzuat] = mevzuatItems;
-        }
-      }
-    });
-
-    return filtered;
-  };
-
-  const getCategoryIcon = (mevzuat: string) => {
-    const iconClass = "h-5 w-5";
-    
-    if (mevzuat.toLowerCase().includes('banka') || mevzuat.toLowerCase().includes('kart')) {
-      return <Building2 className={`${iconClass} text-indigo-600`} />;
-    } else if (mevzuat.toLowerCase().includes('sistem') || mevzuat.toLowerCase().includes('sermaye')) {
-      return <Shield className={`${iconClass} text-green-600`} />;
-    } else if (mevzuat.toLowerCase().includes('faizsiz') || mevzuat.toLowerCase().includes('teblig')) {
-      return <BookOpen className={`${iconClass} text-blue-600`} />;
-    } else if (mevzuat.toLowerCase().includes('finansal') || mevzuat.toLowerCase().includes('borc')) {
-      return <TrendingUp className={`${iconClass} text-purple-600`} />;
-    } else if (mevzuat.toLowerCase().includes('kredi') || mevzuat.toLowerCase().includes('rehber')) {
-      return <FileCheck className={`${iconClass} text-orange-600`} />;
-    } else if (mevzuat.toLowerCase().includes('sorunlu') || mevzuat.toLowerCase().includes('alacak')) {
-      return <AlertCircle className={`${iconClass} text-red-600`} />;
-    } else if (mevzuat.toLowerCase().includes('yönetmelik')) {
-      return <Scale className={`${iconClass} text-teal-600`} />;
-    } else if (mevzuat.toLowerCase().includes('kanun')) {
-      return <Users className={`${iconClass} text-cyan-600`} />;
-    } else {
-      return <Archive className={`${iconClass} text-slate-600`} />;
-    }
-  };
-
-  const copyAsTable = async () => {
-    if (!selectedItem) return;
-    
-    // Excel için en basit format - tab ile ayrılmış, tırnaksız
-    const madde = (selectedItem.madde || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    const rehberRef = (selectedItem.rehberRef || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    const soru = (selectedItem.soru || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    const aciklama = (selectedItem.aciklama || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    const prosedür = (selectedItem.prosedür || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    const kanit = (selectedItem.kanit || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
-    
-    const content = `Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu
-${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}`;
-
-    try {
-      await navigator.clipboard.writeText(content);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error('Kopyalama başarısız:', err);
-    }
-  };
+  const quickAccessLinks = [
+    {
+      title: 'Basit Liste',
+      description: 'Gelişmiş arama ve filtreleme ile denetim maddelerini inceleyin',
+      href: '/basit-liste',
+      icon: FileText,
+      color: 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400',
+    },
+    {
+      title: 'Tüm Veri',
+      description: 'Detaylı tablo görünümü ile tüm verilere erişin',
+      href: '/tum-veri',
+      icon: Table,
+      color: 'bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400',
+    },
+    {
+      title: 'Gelişmiş Analiz',
+      description: 'Mevzuat ilişkilerini network grafiği ile görselleştirin',
+      href: '/gelismis-mevzuat-analizi',
+      icon: Network,
+      color: 'bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400',
+    },
+  ];
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Yükleniyor...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
         </div>
       </div>
     );
   }
 
-  const groupedItems = filteredGroupedItems();
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h1>
+        <p className="text-slate-600 dark:text-slate-400 mt-2">
+          Denetim ve mevzuat referans sisteminize hoş geldiniz
+        </p>
+      </div>
+
+      {/* Summary Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Toplam Mevzuat
+            </CardTitle>
+            <FileText className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              {stats.totalRegulations}
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              Denetim maddesi
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Kategori Sayısı
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              {stats.totalCategories}
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              Farklı mevzuat kategorisi
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Durum
+            </CardTitle>
+            <AlertCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-600">
+              Aktif
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              Sistem çalışıyor
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              Son Güncelleme
+            </CardTitle>
+            <Clock className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Bugün
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              {stats.lastUpdate}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Access Section */}
+      <div>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+          Hızlı Erişim
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {quickAccessLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link key={link.href} href={link.href}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  <CardHeader>
+                    <div className="flex items-center space-x-4">
+                      <div className={`p-3 rounded-lg ${link.color}`}>
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">{link.title}</CardTitle>
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-slate-400" />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-sm">
+                      {link.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recent Activity / Info Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sistem Bilgileri</CardTitle>
+          <CardDescription>
+            AuditRef platformu hakkında önemli bilgiler
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-start space-x-3">
+            <Badge variant="outline" className="mt-0.5">v1.0</Badge>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">AuditRef</h1>
-              <p className="text-slate-600 mt-1">Denetim Referans Aracı</p>
-            </div>
-            <div className="w-96">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-slate-400" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg bg-white placeholder-slate-500 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="Madde, rehber veya soruda ara..."
-                />
-              </div>
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                Versiyon 1.0 Yayında
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Tüm temel özellikler aktif ve kullanıma hazır
+              </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Sol Panel - Kategoriler */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-indigo-500 to-indigo-600">
-                <h2 className="text-lg font-semibold text-white">Kategoriler</h2>
-                <p className="text-indigo-100 text-sm mt-1">
-                  {Object.keys(groupedItems).length} ana kategori
-                </p>
-              </div>
-              
-              <div className="max-h-96 overflow-y-auto">
-                {Object.keys(groupedItems).length === 0 ? (
-                  <div className="p-8 text-center">
-                    <p className="text-slate-500">Sonuç bulunamadı</p>
-                  </div>
-                ) : (
-                  Object.keys(groupedItems).map((mevzuat) => (
-                    <div key={mevzuat} className="border-b border-slate-100 last:border-b-0">
-                      <button
-                        onClick={() => toggleCategory(mevzuat)}
-                        className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
-                      >
-                        <div className="flex items-center space-x-3">
-                          {getCategoryIcon(mevzuat)}
-                          <div className="text-left">
-                            <p className="font-medium text-slate-900">{mevzuat}</p>
-                            <p className="text-xs text-slate-500">
-                              {groupedItems[mevzuat].length} madde
-                            </p>
-                          </div>
-                        </div>
-                        {expandedCategories.has(mevzuat) ? (
-                          <ChevronDown className="h-4 w-4 text-slate-400" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 text-slate-400" />
-                        )}
-                      </button>
-                      
-                      {expandedCategories.has(mevzuat) && (
-                        <div className="bg-slate-50 px-4 py-2 space-y-1">
-                          {groupedItems[mevzuat].map((item) => (
-                            <button
-                              key={item.id}
-                              onClick={() => setSelectedItem(item)}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                                selectedItem?.id === item.id
-                                  ? 'bg-indigo-100 text-indigo-700 font-medium'
-                                  : 'text-slate-600 hover:bg-white hover:text-slate-900'
-                              }`}
-                            >
-                              <p className="truncate font-medium">{item.madde}</p>
-                              <p className="text-xs text-slate-500 truncate">{item.rehberRef}</p>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
+          <div className="flex items-start space-x-3">
+            <Badge variant="outline" className="mt-0.5 bg-green-50 text-green-700 border-green-200">
+              Yeni
+            </Badge>
+            <div>
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                Gelişmiş Mevzuat Analizi
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Network görselleştirmesi ile mevzuat ilişkilerini keşfedin
+              </p>
             </div>
           </div>
-
-          {/* Sağ Panel - Detay */}
-          <div className="lg:col-span-2">
-            {selectedItem ? (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-6 bg-gradient-to-r from-indigo-500 to-indigo-600">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white">{selectedItem.madde}</h3>
-                      <p className="text-indigo-100 mt-2">{selectedItem.rehberRef}</p>
-                      <p className="text-indigo-100 text-sm mt-1">{selectedItem.mevzuat}</p>
-                    </div>
-                    <div className="relative">
-                      <button
-                        onClick={copyAsTable}
-                        className="ml-4 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center gap-2"
-                      >
-                        <Copy className="w-4 h-4" />
-                        {copySuccess ? 'Kopyalama Başarılı' : 'Kopyala'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-6 space-y-6">
-                  <div>
-                    <h4 className="text-lg font-medium text-slate-900 mb-3">Kontrol Sorusu</h4>
-                    <div className="bg-slate-50 rounded-lg p-4">
-                      <p className="text-slate-700">{selectedItem.soru}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-lg font-medium text-slate-900 mb-3">Açıklama ve Gerekçe</h4>
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <p className="text-slate-700 leading-relaxed">{selectedItem.aciklama}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-lg font-medium text-slate-900 mb-3">Denetim Testi (Prosedür)</h4>
-                    <div className="bg-green-50 rounded-lg p-4">
-                      <p className="text-slate-700 leading-relaxed whitespace-pre-line">{selectedItem.prosedür}</p>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-lg font-medium text-slate-900 mb-3">Uygulama Notu / Örnek Kanıt</h4>
-                    <div className="bg-amber-50 rounded-lg p-4">
-                      <p className="text-slate-700 leading-relaxed">{selectedItem.kanit}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center">
-                <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FileText className="h-8 w-8 text-indigo-600" />
-                  </div>
-                  <h3 className="text-lg font-medium text-slate-900 mb-2">Denetim Madde Seçimi</h3>
-                  <p className="text-slate-600">
-                    Sol taraftan bir kategori seçip ardından detaylarını görüntülemek istediğiniz maddeye tıklayın.
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      
-          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
