@@ -11,12 +11,18 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <Sidebar />
+      <aside className={`hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col transition-all duration-300 ease-in-out ${
+        sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'
+      }`}>
+        <Sidebar 
+          collapsed={sidebarCollapsed} 
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)} 
+        />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -27,7 +33,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Sheet>
 
       {/* Main Content */}
-      <div className="lg:pl-64">
+      <div className={`transition-all duration-300 ease-in-out ${
+        sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+      }`}>
         <Header onMenuClick={() => setMobileMenuOpen(true)} />
         
         <main className="py-6 px-4 sm:px-6 lg:px-8">

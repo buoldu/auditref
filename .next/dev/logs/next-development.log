@@ -1,13 +1,39 @@
-[00:00:00.866] Server  LOG     ✓ Ready in 623ms
-[00:00:13.478] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:13.646] Browser WARN    Duplicate headers found and renamed.
-[00:00:27.824] Browser WARN    Duplicate headers found and renamed.
-[00:00:27.824] Browser WARN    Duplicate headers found and renamed.
-[00:00:29.660] Browser WARN    Duplicate headers found and renamed.
-[00:00:29.660] Browser WARN    Duplicate headers found and renamed.
-[00:00:35.087] Browser WARN    Duplicate headers found and renamed.
-[00:00:35.087] Browser WARN    Duplicate headers found and renamed.
-[00:01:38.944] Server  WARN    ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
-Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:01:38.960] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:39.151] Browser WARN    Duplicate headers found and renamed.
+[00:00:00.693] Server  LOG     ✓ Ready in 494ms
+[00:00:15.772] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:15.957] Browser WARN    Duplicate headers found and renamed.
+[00:00:24.135] Browser WARN    Duplicate headers found and renamed.
+[00:00:24.135] Browser WARN    Duplicate headers found and renamed.
+[00:00:30.171] Browser WARN    Duplicate headers found and renamed.
+[00:00:30.171] Browser WARN    Duplicate headers found and renamed.
+[00:00:41.723] Browser WARN    Duplicate headers found and renamed.
+[00:00:41.723] Browser WARN    Duplicate headers found and renamed.
+[00:00:45.771] Browser WARN    Duplicate headers found and renamed.
+[00:00:45.771] Browser WARN    Duplicate headers found and renamed.
+[00:00:46.954] Browser WARN    Duplicate headers found and renamed.
+[00:00:46.955] Browser WARN    Duplicate headers found and renamed.
+[00:00:53.475] Browser WARN    Duplicate headers found and renamed.
+[00:00:53.475] Browser WARN    Duplicate headers found and renamed.
+[00:00:55.478] Browser WARN    Duplicate headers found and renamed.
+[00:00:55.479] Browser WARN    Duplicate headers found and renamed.
+[00:01:06.163] Browser WARN    Duplicate headers found and renamed.
+[00:01:06.163] Browser WARN    Duplicate headers found and renamed.
+[00:01:07.434] Browser WARN    Duplicate headers found and renamed.
+[00:01:07.434] Browser WARN    Duplicate headers found and renamed.
+[00:01:10.083] Browser WARN    Duplicate headers found and renamed.
+[00:01:10.083] Browser WARN    Duplicate headers found and renamed.
+[00:01:19.231] Browser WARN    Duplicate headers found and renamed.
+[00:01:19.231] Browser WARN    Duplicate headers found and renamed.
+[00:01:47.481] Browser WARN    Duplicate headers found and renamed.
+[00:01:47.481] Browser WARN    Duplicate headers found and renamed.
+[00:02:26.532] Browser WARN    Duplicate headers found and renamed.
+[00:02:26.532] Browser WARN    Duplicate headers found and renamed.
+[00:02:28.242] Browser WARN    Duplicate headers found and renamed.
+[00:02:28.242] Browser WARN    Duplicate headers found and renamed.
+[00:07:54.140] Server  LOG     ✓ Compiled in 58ms
+[00:07:54.349] Browser WARN    Duplicate headers found and renamed.
+[00:08:26.199] Server  LOG     ✓ Compiled in 70ms
+[00:08:26.409] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:08:27.355] Browser WARN    Duplicate headers found and renamed.
+[00:09:19.019] Server  LOG     ✓ Compiled in 59ms
+[00:09:37.842] Server  LOG     ✓ Compiled in 36ms
+[00:10:10.601] Server  LOG     ✓ Compiled in 35ms

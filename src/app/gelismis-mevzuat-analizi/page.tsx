@@ -2,17 +2,14 @@
 
 export default function GelismisMevzuatAnalizi() {
   return (
-    <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0, overflow: 'hidden' }}>
-      <iframe 
-        src="/mevzuat-analiz.html" 
-        style={{ 
-          width: '100%', 
-          height: '100%', 
-          border: 'none',
-          display: 'block'
-        }}
-        title="Mevzuat Analiz Paneli"
-      />
+    <div className="w-full -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="relative" style={{ height: 'calc(100vh - 120px)' }}>
+        <iframe 
+          src="/mevzuat-analiz.html" 
+          className="w-full h-full border-0 block"
+          title="Mevzuat Analiz Paneli"
+        />
+      </div>
     </div>
   );
 }

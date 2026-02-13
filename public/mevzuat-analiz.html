@@ -277,6 +277,7 @@
 
         // State
         let allNodes = nodes.get();
+        let currentSelectedNodeId = null;
 
         // Functions
         function renderNodeList(filterText = '') {
@@ -328,8 +329,17 @@
             const node = nodes.get(nodeId);
             if (!node) return;
 
+            // Toggle behavior: if clicking the same node, collapse the panel
+            if (currentSelectedNodeId === nodeId && detailsPanel.classList.contains('active')) {
+                detailsPanel.classList.remove('active');
+                currentSelectedNodeId = null;
+                network.unselectAll();
+                return;
+            }
+
             // Activate Panel
             detailsPanel.classList.add('active');
+            currentSelectedNodeId = nodeId;
             
             // Update Header
             selectedNodeTitle.innerText = node.label;
@@ -381,6 +391,7 @@
                 showDetails(params.nodes[0]);
             } else {
                 detailsPanel.classList.remove('active');
+                currentSelectedNodeId = null;
             }
         });
 
