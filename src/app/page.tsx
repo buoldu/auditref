@@ -1,18 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FileText, Table, Network, TrendingUp, AlertCircle, Clock, ArrowRight } from 'lucide-react';
+import { FileText, Table, Network, TrendingUp, AlertCircle, Clock, ArrowRight, FolderTree } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 
 export default function Home() {
   const [items, setItems] = useState<AuditItem[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -37,6 +34,13 @@ export default function Home() {
   };
 
   const quickAccessLinks = [
+    {
+      title: 'Kategoriler',
+      description: 'Mevzuat kategorilerine göre düzenlenmiş denetim maddeleri',
+      href: '/kategoriler',
+      icon: FolderTree,
+      color: 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400',
+    },
     {
       title: 'Basit Liste',
       description: 'Gelişmiş arama ve filtreleme ile denetim maddelerini inceleyin',
@@ -157,25 +161,25 @@ export default function Home() {
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
           Hızlı Erişim
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {quickAccessLinks.map((link) => {
             const Icon = link.icon;
             return (
               <Link key={link.href} href={link.href}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                   <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div className={`p-3 rounded-lg ${link.color}`}>
-                        <Icon className="h-6 w-6" />
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2.5 sm:p-3 rounded-lg flex-shrink-0 ${link.color}`}>
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                       </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">{link.title}</CardTitle>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base sm:text-lg truncate">{link.title}</CardTitle>
                       </div>
-                      <ArrowRight className="h-5 w-5 text-slate-400" />
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400 flex-shrink-0" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-sm">
+                    <CardDescription className="text-xs sm:text-sm">
                       {link.description}
                     </CardDescription>
                   </CardContent>
@@ -185,42 +189,6 @@ export default function Home() {
           })}
         </div>
       </div>
-
-      {/* Recent Activity / Info Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Sistem Bilgileri</CardTitle>
-          <CardDescription>
-            AuditRef platformu hakkında önemli bilgiler
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-start space-x-3">
-            <Badge variant="outline" className="mt-0.5">v1.0</Badge>
-            <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                Versiyon 1.0 Yayında
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Tüm temel özellikler aktif ve kullanıma hazır
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <Badge variant="outline" className="mt-0.5 bg-green-50 text-green-700 border-green-200">
-              Yeni
-            </Badge>
-            <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                Gelişmiş Mevzuat Analizi
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Network görselleştirmesi ile mevzuat ilişkilerini keşfedin
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, ChevronDown, ChevronRight, Filter, X } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -248,26 +248,26 @@ export default function BasitListe() {
                 className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                 onClick={() => toggleExpanded(item.id)}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg">{item.madde}</CardTitle>
-                      <Badge variant="outline" className="ml-2">
+                <div className="flex items-start gap-2">
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <div className="flex flex-wrap items-start gap-2">
+                      <CardTitle className="text-base sm:text-lg break-words">{item.madde}</CardTitle>
+                      <Badge variant="outline" className="flex-shrink-0 text-xs">
                         {item.mevzuat}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                      <div>
+                      <div className="min-w-0">
                         <span className="font-medium text-slate-700 dark:text-slate-300">Rehber:</span>
-                        <p className="text-slate-600 dark:text-slate-400 mt-1">{item.rehberRef}</p>
+                        <p className="text-slate-600 dark:text-slate-400 mt-1 break-words">{item.rehberRef}</p>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <span className="font-medium text-slate-700 dark:text-slate-300">Soru:</span>
-                        <p className="text-slate-600 dark:text-slate-400 mt-1">{item.soru}</p>
+                        <p className="text-slate-600 dark:text-slate-400 mt-1 break-words">{item.soru}</p>
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="ml-4">
+                  <Button variant="ghost" size="sm" className="flex-shrink-0">
                     {expandedItems.has(item.id) ? (
                       <ChevronDown className="h-4 w-4" />
                     ) : (

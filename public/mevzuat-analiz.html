@@ -189,9 +189,113 @@
             display: inline-block;
         }
 
+        /* Dark Theme */
+        body.dark, body.dark html {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        body.dark #sidebar {
+            background: #1e293b;
+            border-right-color: #334155;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        }
+        body.dark #search-container {
+            border-bottom-color: #334155;
+            background: #1e293b;
+        }
+        body.dark #search-input {
+            background: #0f172a;
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+        body.dark #search-input:focus {
+            border-color: #60a5fa;
+        }
+        body.dark #search-input::placeholder {
+            color: #94a3b8;
+        }
+        body.dark .node-item {
+            border-bottom-color: #334155;
+            color: #e2e8f0;
+        }
+        body.dark .node-item:hover {
+            background-color: #334155;
+        }
+        body.dark .node-item div div:last-child {
+            color: #94a3b8 !important;
+        }
+        body.dark #details-panel {
+            border-top-color: #475569;
+            background: #1e293b;
+        }
+        body.dark .detail-title {
+            color: #f1f5f9;
+        }
+        body.dark .detail-subtitle {
+            color: #94a3b8;
+        }
+        body.dark .connection-item {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+        body.dark .connection-item:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        body.dark .connection-item span[style*="color:#333"] {
+            color: #f1f5f9 !important;
+        }
+        body.dark .connection-item span[style*="color:#888"],
+        body.dark .connection-item div[style*="color:#888"] {
+            color: #94a3b8 !important;
+        }
+        body.dark .similarity-bar {
+            background: #475569;
+        }
+        body.dark #network-container {
+            background: #0f172a;
+        }
+        body.dark #legend {
+            background: rgba(30, 41, 59, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            color: #e2e8f0;
+        }
+        body.dark #legend div[style*="border-bottom"] {
+            border-bottom-color: #475569 !important;
+        }
+        body.dark div[style*="color:#555"] {
+            color: #94a3b8 !important;
+            border-bottom-color: #334155 !important;
+        }
+        body.dark div[style*="color:#999"] {
+            color: #64748b !important;
+        }
+
     </style>
 </head>
 <body>
+    <script>
+        // Sync dark mode with parent document
+        function checkDarkMode() {
+            try {
+                const parentDark = window.parent.document.documentElement.classList.contains('dark');
+                document.body.classList.toggle('dark', parentDark);
+            } catch(e) {
+                // If cross-origin, check prefers-color-scheme
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.classList.add('dark');
+                }
+            }
+        }
+        checkDarkMode();
+        // Observe parent for class changes
+        try {
+            const observer = new MutationObserver(checkDarkMode);
+            observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        } catch(e) {}
+        setInterval(checkDarkMode, 1000);
+    </script>
 
     <div id="sidebar">
         <div id="search-container">

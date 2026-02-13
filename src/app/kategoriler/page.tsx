@@ -6,7 +6,6 @@ import { AuditItem, auditDataService } from '@/lib/audit-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
 export default function KategorilerPage() {
   const [items, setItems] = useState<AuditItem[]>([]);
@@ -126,28 +125,22 @@ export default function KategorilerPage() {
         </p>
       </div>
 
-      {/* Arama */}
-      <Card>
-        <CardContent className="pt-6">
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Madde, rehber veya soruda ara..."
-            className="max-w-2xl"
-          />
-        </CardContent>
-      </Card>
-
       {/* Ana İçerik */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sol Panel - Kategoriler */}
         <div className="lg:col-span-1">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium mb-2">
                 Kategoriler ({Object.keys(groupedItems).length})
               </CardTitle>
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Ara..."
+                className="h-8 text-sm"
+              />
             </CardHeader>
             <CardContent className="p-0">
               <div className="max-h-[600px] overflow-y-auto">
@@ -209,7 +202,7 @@ export default function KategorilerPage() {
         </div>
 
         {/* Sağ Panel - Detay */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           {selectedItem ? (
             <Card>
               <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">

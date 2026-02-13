@@ -1,9 +1,0 @@
-{
-  "/_global-error/page": "app/_global-error/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/basit-liste/page": "app/basit-liste/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/gelismis-mevzuat-analizi/page": "app/gelismis-mevzuat-analizi/page.js",
-  "/page": "app/page.js",
-  "/tum-veri/page": "app/tum-veri/page.js"
-}

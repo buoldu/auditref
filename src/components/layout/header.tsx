@@ -3,7 +3,6 @@
 import { Search, Menu, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useState, useEffect } from 'react';
 
 interface HeaderProps {
@@ -66,13 +65,6 @@ export function Header({ onMenuClick }: HeaderProps) {
               <Sun className="h-5 w-5" />
             )}
           </Button>
-
-          {/* User Avatar */}
-          <Avatar className="h-9 w-9">
-            <AvatarFallback className="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
-              AK
-            </AvatarFallback>
-          </Avatar>
         </div>
       </div>
     </header>

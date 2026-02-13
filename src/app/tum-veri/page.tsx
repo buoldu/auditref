@@ -44,6 +44,13 @@ const VirtualizedTable = ({ children }: { children: React.ReactNode }) => {
       .enhanced-scrollbar::-webkit-scrollbar-thumb:hover {
         background: #94a3b8 !important;
       }
+      .dark .enhanced-scrollbar::-webkit-scrollbar-track {
+        background: #1e293b !important;
+      }
+      .dark .enhanced-scrollbar::-webkit-scrollbar-thumb {
+        background: #475569 !important;
+        border-color: #1e293b !important;
+      }
       .cell-scrollbar::-webkit-scrollbar {
         width: 8px !important;
         height: 8px !important;
@@ -90,8 +97,8 @@ const VirtualizedTable = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="enhanced-scrollbar overflow-x-auto overflow-y-visible border border-slate-200 rounded-lg">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow overflow-hidden">
+      <div className="enhanced-scrollbar overflow-x-auto overflow-y-visible border border-slate-200 dark:border-slate-700 rounded-lg">
         {children}
       </div>
     </div>
@@ -104,13 +111,13 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
   const isExpanded = expandedRows.has(item.id);
   
   return (
-    <div className={`border-b border-slate-200 ${
-      index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
-    } hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 transition-all duration-200`}>
+    <div className={`border-b border-slate-200 dark:border-slate-700 ${
+      index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/50 dark:bg-slate-800/50'
+    } hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50 dark:hover:from-slate-800 dark:hover:to-indigo-950 transition-all duration-200`}>
       {/* Main row */}
       <div className="flex items-stretch">
         {/* Checkbox cell */}
-        <div className="w-[5%] px-3 py-4 text-sm text-slate-600 flex items-center border-r border-slate-100">
+        <div className="w-[5%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-center border-r border-slate-100 dark:border-slate-700">
           <input
             type="checkbox"
             checked={selectedItems.has(item.id)}
@@ -121,7 +128,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         
         {/* Madde cell - Clickable */}
         <div 
-          className="w-[12%] px-3 py-4 text-sm font-medium text-slate-900 flex items-start border-r border-slate-100 cursor-pointer hover:bg-indigo-50 transition-colors"
+          className="w-[12%] px-3 py-4 text-sm font-medium text-slate-900 dark:text-slate-100 flex items-start border-r border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
           onClick={() => toggleRowExpansion(item.id)}
         >
           <div className="w-full">
@@ -135,7 +142,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         </div>
         
         {/* Rehber cell */}
-        <div className="w-[15%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+        <div className="w-[15%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-start border-r border-slate-100 dark:border-slate-700">
           <div className="w-full">
             <p className="break-words leading-relaxed text-sm line-clamp-2">
               {item.rehberRef}
@@ -144,7 +151,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         </div>
         
         {/* Soru cell */}
-        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-start border-r border-slate-100 dark:border-slate-700">
           <div className="w-full">
             <p className="break-words leading-relaxed text-sm line-clamp-2">
               {item.soru}
@@ -153,7 +160,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         </div>
         
         {/* Açıklama cell */}
-        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+        <div className="w-[20%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-start border-r border-slate-100 dark:border-slate-700">
           <div className="w-full">
             <p className="break-words leading-relaxed text-sm line-clamp-2">
               {item.aciklama}
@@ -162,7 +169,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         </div>
         
         {/* Prosedür cell */}
-        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 flex items-start border-r border-slate-100">
+        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-start border-r border-slate-100 dark:border-slate-700">
           <div className="w-full">
             <p className="break-words leading-relaxed text-sm line-clamp-2">
               {item.prosedür}
@@ -171,7 +178,7 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
         </div>
         
         {/* Kanıt cell */}
-        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 flex items-start">
+        <div className="w-[14%] px-3 py-4 text-sm text-slate-600 dark:text-slate-400 flex items-start">
           <div className="w-full">
             <p className="break-words leading-relaxed text-sm line-clamp-2">
               {item.kanit}
@@ -182,44 +189,44 @@ const VirtualizedRow = ({ index, style, data }: { index: number; style: React.CS
       
       {/* Expanded content */}
       {isExpanded && (
-        <div className="bg-gradient-to-r from-indigo-50 to-slate-50 border-l-4 border-indigo-400 px-6 py-4">
+        <div className="bg-gradient-to-r from-indigo-50 to-slate-50 dark:from-indigo-950 dark:to-slate-900 border-l-4 border-indigo-400 px-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Analiz Edilen Madde</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Analiz Edilen Madde</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.madde}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">İlişkili Rehber</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">İlişkili Rehber</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.rehberRef}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kontrol Sorusu</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Kontrol Sorusu</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.soru}
                 </p>
               </div>
             </div>
             <div className="space-y-3">
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Açıklama ve Gerekçe</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Açıklama ve Gerekçe</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.aciklama}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Denetim Testi (Prosedür)</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Denetim Testi (Prosedür)</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.prosedür}
                 </p>
               </div>
               <div>
-                <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Uygulama Notu / Örnek Kanıt</h4>
-                <p className="text-sm text-slate-800 leading-relaxed bg-white p-3 rounded border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Uygulama Notu / Örnek Kanıt</h4>
+                <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-white dark:bg-slate-800 p-3 rounded border border-slate-200 dark:border-slate-600">
                   {item.kanit}
                 </p>
               </div>
@@ -420,26 +427,26 @@ export default function TumVeri2Page() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Yükleniyor...</p>
+          <p className="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Başlık */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Tüm Denetim Verileri</h1>
-          <p className="text-sm sm:text-base text-slate-600">Gelişmiş tablo görünümü ve sıralama özellikleri</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Tüm Denetim Verileri</h1>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Gelişmiş tablo görünümü ve sıralama özellikleri</p>
         </div>
 
         {/* Arama ve Filtreler */}
-        <div className="mb-6 bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+        <div className="mb-6 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -449,12 +456,12 @@ export default function TumVeri2Page() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-lg bg-white placeholder-slate-500 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 text-black dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Tüm dokümanlarda ara..."
               />
             </div>
             <div className="flex items-center justify-center">
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-slate-600 dark:text-slate-400">
                 {filteredItems.length} sonuç bulundu
                 {selectedItems.size > 0 && (
                   <span className="ml-2 text-indigo-600 font-medium">
@@ -477,62 +484,62 @@ export default function TumVeri2Page() {
           {/* Hızlı Filtreler */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Madde</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Madde</label>
               <input
                 type="text"
                 value={columnFilters.madde}
                 onChange={(e) => handleColumnFilter('madde', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Rehber</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Rehber</label>
               <input
                 type="text"
                 value={columnFilters.rehberRef}
                 onChange={(e) => handleColumnFilter('rehberRef', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Soru</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Soru</label>
               <input
                 type="text"
                 value={columnFilters.soru}
                 onChange={(e) => handleColumnFilter('soru', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Açıklama</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Açıklama</label>
               <input
                 type="text"
                 value={columnFilters.aciklama}
                 onChange={(e) => handleColumnFilter('aciklama', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Prosedür</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Prosedür</label>
               <input
                 type="text"
                 value={columnFilters.prosedür}
                 onChange={(e) => handleColumnFilter('prosedür', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Kanıt</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Kanıt</label>
               <input
                 type="text"
                 value={columnFilters.kanit}
                 onChange={(e) => handleColumnFilter('kanit', e.target.value)}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
             </div>
@@ -541,11 +548,11 @@ export default function TumVeri2Page() {
 
         {/* Tablo */}
         <VirtualizedTable>
-          <div className="border border-slate-200 rounded-lg">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-lg">
             {/* Header */}
-            <div className="bg-gradient-to-r from-slate-50 to-slate-100 sticky top-0 z-10">
-              <div className="flex items-stretch border-b border-slate-200">
-                <div className="w-[5%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+            <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800 sticky top-0 z-10">
+              <div className="flex items-stretch border-b border-slate-200 dark:border-slate-700">
+                <div className="w-[5%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -556,67 +563,67 @@ export default function TumVeri2Page() {
                     <span>Seç</span>
                   </div>
                 </div>
-                <div className="w-[12%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[12%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Analiz Edilen Madde</span>
                     <button 
                       onClick={() => handleSort('madde')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <div className="w-[15%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[15%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>İlişkili Rehber</span>
                     <button 
                       onClick={() => handleSort('rehberRef')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Kontrol Sorusu</span>
                     <button 
                       onClick={() => handleSort('soru')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Açıklama ve Gerekçe</span>
                     <button 
                       onClick={() => handleSort('aciklama')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Denetim Testi</span>
                     <button 
                       onClick={() => handleSort('prosedür')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                <div className="w-[14%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Uygulama Notu</span>
                     <button 
                       onClick={() => handleSort('kanit')}
-                      className="p-1 hover:bg-slate-200 rounded transition-colors"
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
                     >
                       <ArrowUpDown className="w-3 h-3" />
                     </button>
@@ -627,7 +634,7 @@ export default function TumVeri2Page() {
             
             {/* Virtualized Body */}
             {filteredItems.length === 0 ? (
-              <div className="px-6 py-12 text-center text-slate-500">
+              <div className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                 {searchQuery ? 'Arama kriterlerinize uygun sonuç bulunamadı.' : 'Gösterilecek veri bulunamadı.'}
               </div>
             ) : (

@@ -57,45 +57,54 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
 
   return (
     <div className={cn(
-      "flex flex-col h-full bg-slate-900 text-slate-100",
-      "w-64 border-r border-slate-800"
+      "flex flex-col h-full bg-slate-900 text-slate-100 border-r border-slate-800 transition-all duration-300",
+      collapsed ? "w-20" : "w-64"
     )}>
       {/* Logo Header */}
-      <div className="flex items-center justify-between h-16 px-6 border-b border-slate-800">
-        {!collapsed && (
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AR</span>
-            </div>
-            <span className="font-semibold text-lg">AuditRef</span>
-          </div>
-        )}
-        {collapsed && (
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto">
+      <div className={cn(
+        "flex items-center h-16 border-b border-slate-800 overflow-hidden",
+        collapsed ? "justify-center px-2" : "justify-between px-4"
+      )}>
+        <div className="flex items-center space-x-2 flex-shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">AR</span>
           </div>
-        )}
+          {!collapsed && <span className="font-semibold text-lg whitespace-nowrap">AuditRef</span>}
+        </div>
         {onClose && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="lg:hidden text-slate-400 hover:text-slate-100"
+            className="lg:hidden text-slate-400 hover:text-slate-100 flex-shrink-0"
           >
             <X className="h-5 w-5" />
           </Button>
         )}
-        {onToggleCollapse && !onClose && (
+        {onToggleCollapse && !onClose && !collapsed && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleCollapse}
-            className="hidden lg:flex text-slate-400 hover:text-slate-100"
+            className="hidden lg:flex text-slate-400 hover:text-slate-100 flex-shrink-0"
           >
-            {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+            <ChevronLeft className="h-4 w-4" />
           </Button>
         )}
       </div>
+      {/* Collapse toggle at bottom for collapsed state */}
+      {onToggleCollapse && !onClose && collapsed && (
+        <div className="flex justify-center py-2 border-b border-slate-800">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleCollapse}
+            className="text-slate-400 hover:text-slate-100"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-4">
