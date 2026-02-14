@@ -125,7 +125,7 @@ function BasitListe() {
     <div className="space-y-3">
       {/* Başlık */}
       <div className="flex items-baseline gap-3">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Gelişmiş Veri Listesi</h1>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Basit Liste</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">Detaylı arama, filtreleme ve seçme</p>
       </div>
 

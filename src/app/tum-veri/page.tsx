@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, Copy, Filter, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
+import { Badge } from '@/components/ui/badge';
 
 const sortedData = (items: AuditItem[], sortConfig: { key: keyof AuditItem | null; direction: 'asc' | 'desc' }) => {
     if (!sortConfig.key) return items;
@@ -546,7 +547,8 @@ export default function TumVeri2Page() {
           </div>
         </div>
 
-        {/* Tablo */}
+        {/* Tablo - Desktop */}
+        <div className="hidden lg:block">
         <VirtualizedTable>
           <div className="border border-slate-200 dark:border-slate-700 rounded-lg">
             {/* Header */}
@@ -657,6 +659,69 @@ export default function TumVeri2Page() {
             )}
           </div>
         </VirtualizedTable>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden space-y-3">
+          {filteredItems.length === 0 ? (
+            <div className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+              {searchQuery ? 'Arama kriterlerinize uygun sonuç bulunamadı.' : 'Gösterilecek veri bulunamadı.'}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredItems.map((item) => (
+                <div key={item.id} className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.has(item.id)}
+                      onChange={() => toggleSelection(item.id)}
+                      className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                    />
+                    <span className="font-medium text-slate-900 dark:text-slate-100 text-sm">{item.madde}</span>
+                    <Badge variant="outline" className="text-xs ml-auto">{item.mevzuat}</Badge>
+                  </div>
+                  <div className="p-3 space-y-2 text-sm">
+                    {item.rehberRef && (
+                      <div>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Rehber:</span>
+                        <p className="text-slate-700 dark:text-slate-300">{item.rehberRef}</p>
+                      </div>
+                    )}
+                    {item.soru && (
+                      <div>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Soru:</span>
+                        <p className="text-slate-700 dark:text-slate-300 line-clamp-2">{item.soru}</p>
+                      </div>
+                    )}
+                    {expandedRows.has(item.id) && (
+                      <>
+                        {item.aciklama && (
+                          <div>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">Açıklama:</span>
+                            <p className="text-slate-700 dark:text-slate-300 text-xs">{item.aciklama}</p>
+                          </div>
+                        )}
+                        {item.prosedür && (
+                          <div>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">Prosedür:</span>
+                            <p className="text-slate-700 dark:text-slate-300 text-xs whitespace-pre-line">{item.prosedür}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    <button
+                      onClick={() => toggleRowExpansion(item.id)}
+                      className="text-xs text-indigo-600 dark:text-indigo-400 font-medium"
+                    >
+                      {expandedRows.has(item.id) ? 'Daha az göster' : 'Devamını göster'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

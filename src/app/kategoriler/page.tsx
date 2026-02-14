@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, FileText, Building2, Shield, BookOpen, Scale, Users, AlertCircle, TrendingUp, FileCheck, Archive } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Building2, Shield, BookOpen, Scale, Users, AlertCircle, TrendingUp, FileCheck, Archive, X } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 export default function KategorilerPage() {
   const [items, setItems] = useState<AuditItem[]>([]);
@@ -13,6 +14,15 @@ export default function KategorilerPage() {
   const [loading, setLoading] = useState(true);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [selectedItem, setSelectedItem] = useState<AuditItem | null>(null);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const handleSelectItem = (item: AuditItem) => {
+    setSelectedItem(item);
+    // Mobil görünümde detay panelini aç
+    if (window.innerWidth < 1024) {
+      setMobileDetailOpen(true);
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -178,7 +188,7 @@ export default function KategorilerPage() {
                           {groupedItems[mevzuat].map((item) => (
                             <button
                               key={item.id}
-                              onClick={() => setSelectedItem(item)}
+                              onClick={() => handleSelectItem(item)}
                               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                 selectedItem?.id === item.id
                                   ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium'
@@ -280,6 +290,50 @@ export default function KategorilerPage() {
           )}
         </div>
       </div>
+
+      {/* Mobile Detail Sheet */}
+      <Sheet open={mobileDetailOpen} onOpenChange={setMobileDetailOpen}>
+        <SheetContent side="bottom" className="h-[85vh] lg:hidden">
+          {selectedItem && (
+            <div className="h-full overflow-y-auto">
+              <SheetHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white -mx-6 -mt-6 px-6 py-4 mb-4">
+                <SheetTitle className="text-white">{selectedItem.madde}</SheetTitle>
+                <p className="text-blue-100 text-sm">{selectedItem.rehberRef}</p>
+              </SheetHeader>
+              
+              <div className="space-y-4 pb-6">
+                <div>
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Kontrol Sorusu</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm">{selectedItem.soru}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Açıklama ve Gerekçe</h4>
+                  <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{selectedItem.aciklama}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Denetim Testi (Prosedür)</h4>
+                  <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-3 border border-purple-200 dark:border-purple-800">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-line">{selectedItem.prosedür}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Uygulama Notu / Örnek Kanıt</h4>
+                  <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-3 border border-amber-200 dark:border-amber-800">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{selectedItem.kanit}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
