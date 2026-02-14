@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Search, ChevronDown, ChevronRight, Filter, X } from 'lucide-react';
 import { AuditItem, auditDataService } from '@/lib/audit-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,9 +18,25 @@ interface SearchFilters {
   kanit: string;
 }
 
-export default function BasitListe() {
+export default function BasitListePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Yükleniyor...</p>
+        </div>
+      </div>
+    }>
+      <BasitListe />
+    </Suspense>
+  );
+}
+
+function BasitListe() {
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<AuditItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [loading, setLoading] = useState(true);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
@@ -105,120 +122,81 @@ export default function BasitListe() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Başlık */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Gelişmiş Veri Listesi</h1>
-        <p className="text-slate-600 dark:text-slate-400">Detaylı arama, filtreleme ve seçme ile verileri keşfedin</p>
+      <div className="flex items-baseline gap-3">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Gelişmiş Veri Listesi</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Detaylı arama, filtreleme ve seçme</p>
       </div>
 
       {/* Arama Barı */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-20"
-                placeholder="Tüm başlıklarda ara..."
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                Filtreler
-              </Button>
-            </div>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <Input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 pr-24 h-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700"
+          placeholder="Tüm başlıklarda ara..."
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 text-xs"
+        >
+          <Filter className="h-3.5 w-3.5 mr-1" />
+          Filtreler
+        </Button>
+      </div>
 
-            {/* Gelişmiş Arama */}
-            {showAdvancedSearch && (
-              <div className="pt-4 border-t">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">Gelişmiş Filtreler</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowAdvancedSearch(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Analiz Edilen Madde</label>
-                    <Input
-                      type="text"
-                      value={filters.madde}
-                      onChange={(e) => setFilters({...filters, madde: e.target.value})}
-                      placeholder="Madde ara..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Rehber Maddesi</label>
-                    <Input
-                      type="text"
-                      value={filters.rehberRef}
-                      onChange={(e) => setFilters({...filters, rehberRef: e.target.value})}
-                      placeholder="Rehber ara..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Kontrol Sorusu</label>
-                    <Input
-                      type="text"
-                      value={filters.soru}
-                      onChange={(e) => setFilters({...filters, soru: e.target.value})}
-                      placeholder="Soru ara..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Açıklama</label>
-                    <Input
-                      type="text"
-                      value={filters.aciklama}
-                      onChange={(e) => setFilters({...filters, aciklama: e.target.value})}
-                      placeholder="Açıklama ara..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Denetim Testi</label>
-                    <Input
-                      type="text"
-                      value={filters.prosedür}
-                      onChange={(e) => setFilters({...filters, prosedür: e.target.value})}
-                      placeholder="Prosedür ara..."
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Uygulama Notu</label>
-                    <Input
-                      type="text"
-                      value={filters.kanit}
-                      onChange={(e) => setFilters({...filters, kanit: e.target.value})}
-                      placeholder="Kanıt ara..."
-                    />
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={clearFilters}
-                  >
-                    Filtreleri Temizle
-                  </Button>
-                </div>
-              </div>
-            )}
+      {/* Gelişmiş Arama */}
+      {showAdvancedSearch && (
+        <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-3">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">Gelişmiş Filtreler</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAdvancedSearch(false)}
+              className="h-7 w-7 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Madde</label>
+              <Input type="text" value={filters.madde} onChange={(e) => setFilters({...filters, madde: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Rehber</label>
+              <Input type="text" value={filters.rehberRef} onChange={(e) => setFilters({...filters, rehberRef: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Soru</label>
+              <Input type="text" value={filters.soru} onChange={(e) => setFilters({...filters, soru: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Açıklama</label>
+              <Input type="text" value={filters.aciklama} onChange={(e) => setFilters({...filters, aciklama: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Prosedür</label>
+              <Input type="text" value={filters.prosedür} onChange={(e) => setFilters({...filters, prosedür: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Kanıt</label>
+              <Input type="text" value={filters.kanit} onChange={(e) => setFilters({...filters, kanit: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+          </div>
+          <div className="mt-2 flex justify-end">
+            <Button variant="outline" size="sm" onClick={clearFilters} className="h-7 text-xs">
+              Filtreleri Temizle
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Sonuç Sayısı */}
       {filteredItems.length > 0 && (

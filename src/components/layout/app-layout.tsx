@@ -36,6 +36,9 @@ export function AppLayout({ children }: AppLayoutProps) {
   const handleSidebarMouseEnter = () => {
     sidebarHovered.current = true;
     if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
+    if (sidebarCollapsed) {
+      setSidebarCollapsed(false);
+    }
   };
 
   const handleSidebarMouseLeave = () => {
@@ -75,7 +78,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       }`}>
         <Header onMenuClick={() => setMobileMenuOpen(true)} />
         
-        <main className="py-6 px-4 sm:px-6 lg:px-8">
+        <main className="relative py-6 px-4 sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

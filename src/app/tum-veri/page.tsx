@@ -440,23 +440,23 @@ export default function TumVeri2Page() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Başlık */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Tüm Denetim Verileri</h1>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400">Gelişmiş tablo görünümü ve sıralama özellikleri</p>
+        <div className="mb-3 flex items-baseline gap-3">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Tüm Denetim Verileri</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Gelişmiş tablo görünümü ve sıralama</p>
         </div>
 
         {/* Arama ve Filtreler */}
-        <div className="mb-6 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div className="mb-3 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 p-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
+                <Search className="h-4 w-4 text-slate-400" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-9 sm:pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 text-black dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="block w-full pl-9 pr-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 placeholder-slate-500 dark:placeholder-slate-400 text-black dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="Tüm dokümanlarda ara..."
               />
             </div>
@@ -482,7 +482,7 @@ export default function TumVeri2Page() {
           </div>
 
           {/* Hızlı Filtreler */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             <div>
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Madde</label>
               <input

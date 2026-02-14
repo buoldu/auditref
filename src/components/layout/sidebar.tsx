@@ -57,12 +57,14 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
 
   return (
     <div className={cn(
-      "flex flex-col h-full bg-slate-900 text-slate-100 border-r border-slate-800 transition-all duration-300",
+      "flex flex-col h-full border-r transition-all duration-300",
+      "bg-white text-slate-900 border-slate-200",
+      "dark:bg-slate-950 dark:text-slate-200 dark:border-slate-800",
       collapsed ? "w-20" : "w-64"
     )}>
       {/* Logo Header */}
       <div className={cn(
-        "flex items-center h-16 border-b border-slate-800 overflow-hidden",
+        "flex items-center h-14 border-b border-slate-200 dark:border-slate-800 overflow-hidden",
         collapsed ? "justify-center px-2" : "justify-between px-4"
       )}>
         <div className="flex items-center space-x-2 flex-shrink-0">
@@ -76,7 +78,7 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="lg:hidden text-slate-400 hover:text-slate-100 flex-shrink-0"
+            className="lg:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-100 flex-shrink-0"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -86,7 +88,7 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
             variant="ghost"
             size="icon"
             onClick={onToggleCollapse}
-            className="hidden lg:flex text-slate-400 hover:text-slate-100 flex-shrink-0"
+            className="hidden lg:flex text-slate-400 hover:text-slate-600 dark:hover:text-slate-100 flex-shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -94,12 +96,12 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
       </div>
       {/* Collapse toggle at bottom for collapsed state */}
       {onToggleCollapse && !onClose && collapsed && (
-        <div className="flex justify-center py-2 border-b border-slate-800">
+        <div className="flex justify-center py-2 border-b border-slate-200 dark:border-slate-800">
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleCollapse}
-            className="text-slate-400 hover:text-slate-100"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-100"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -124,8 +126,8 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
                   "text-sm font-medium",
                   collapsed ? "justify-center px-3 py-2.5" : "space-x-3 px-3 py-2.5",
                   isActive
-                    ? "bg-slate-800 text-white"
-                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-100"
+                    ? "bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
                 )}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
@@ -137,10 +139,10 @@ export function Sidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }
 
         {!collapsed && (
           <>
-            <Separator className="my-4 bg-slate-800" />
+            <Separator className="my-4 bg-slate-200 dark:bg-slate-800" />
 
             {/* Footer Info */}
-            <div className="px-3 py-2 text-xs text-slate-500">
+            <div className="px-3 py-2 text-xs text-slate-400 dark:text-slate-500">
               <p>Version 1.0</p>
               <p className="mt-1">© 2026 AuditRef</p>
             </div>
