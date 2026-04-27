@@ -23,4 +23,6 @@ all2.csv
 # Temporary files
 *.tmp
 *.temp
-*.html
+
+# Keep important files
+!public/mevzuat-analiz.html
