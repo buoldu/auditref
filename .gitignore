@@ -3,3 +3,24 @@ node_modules
 out
 .env
 .env.local
+.vercel
+.env*.local
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*_backup.*
+*_current.*
+all2.csv
+
+# Temporary files
+*.tmp
+*.temp
+*.html

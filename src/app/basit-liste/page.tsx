@@ -104,6 +104,7 @@ function BasitListe() {
   const clearFilters = () => {
     setFilters({
       madde: '',
+      maddeMetni: '',
       rehberRef: '',
       soru: '',
       aciklama: '',
