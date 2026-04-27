@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface SearchFilters {
   madde: string;
+  maddeMetni: string;
   rehberRef: string;
   soru: string;
   aciklama: string;
@@ -42,6 +43,7 @@ function BasitListe() {
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>({
     madde: '',
+    maddeMetni: '',
     rehberRef: '',
     soru: '',
     aciklama: '',
@@ -89,6 +91,7 @@ function BasitListe() {
     // Detaylı filtreler
     const detailMatch = 
       (filters.madde === '' || item.madde.toLowerCase().includes(filters.madde.toLowerCase())) &&
+      (filters.maddeMetni === '' || item.maddeMetni.toLowerCase().includes(filters.maddeMetni.toLowerCase())) &&
       (filters.rehberRef === '' || item.rehberRef.toLowerCase().includes(filters.rehberRef.toLowerCase())) &&
       (filters.soru === '' || item.soru.toLowerCase().includes(filters.soru.toLowerCase())) &&
       (filters.aciklama === '' || item.aciklama.toLowerCase().includes(filters.aciklama.toLowerCase())) &&
@@ -170,6 +173,10 @@ function BasitListe() {
               <Input type="text" value={filters.madde} onChange={(e) => setFilters({...filters, madde: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
             </div>
             <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Madde Metni</label>
+              <Input type="text" value={filters.maddeMetni} onChange={(e) => setFilters({...filters, maddeMetni: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
+            </div>
+            <div>
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Rehber</label>
               <Input type="text" value={filters.rehberRef} onChange={(e) => setFilters({...filters, rehberRef: e.target.value})} placeholder="Ara..." className="h-8 text-xs" />
             </div>
@@ -235,6 +242,10 @@ function BasitListe() {
                       </Badge>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div className="min-w-0">
+                        <span className="font-medium text-slate-700 dark:text-slate-300">Madde Metni:</span>
+                        <p className="text-slate-600 dark:text-slate-400 mt-1 break-words line-clamp-2">{item.maddeMetni}</p>
+                      </div>
                       <div className="min-w-0">
                         <span className="font-medium text-slate-700 dark:text-slate-300">Rehber:</span>
                         <p className="text-slate-600 dark:text-slate-400 mt-1 break-words">{item.rehberRef}</p>

@@ -230,6 +230,15 @@ export default function KategorilerPage() {
               <CardContent className="p-6 space-y-6">
                 <div>
                   <h4 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-3">
+                    Madde Metni
+                  </h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
+                    <p className="text-slate-700 dark:text-slate-300 whitespace-pre-line">{selectedItem.maddeMetni}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-3">
                     Kontrol Sorusu
                   </h4>
                   <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
@@ -302,6 +311,13 @@ export default function KategorilerPage() {
               </SheetHeader>
               
               <div className="space-y-4 pb-6">
+                <div>
+                  <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Madde Metni</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm whitespace-pre-line">{selectedItem.maddeMetni}</p>
+                  </div>
+                </div>
+                
                 <div>
                   <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-2">Kontrol Sorusu</h4>
                   <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3">

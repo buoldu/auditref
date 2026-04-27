@@ -249,6 +249,7 @@ export default function TumVeri2Page() {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [columnFilters, setColumnFilters] = useState({
     madde: '',
+    maddeMetni: '',
     rehberRef: '',
     soru: '',
     aciklama: '',
@@ -279,17 +280,18 @@ export default function TumVeri2Page() {
     console.log('Seçili maddeler:', selectedData.length);
     
     // Sadece seçili maddeleri kopyala
-    let content = 'Analiz Edilen Madde\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu\n';
+    let content = 'Analiz Edilen Madde\tMadde Metni\tİlişkili Rehber\tKontrol Sorusu\tAçıklama ve Gerekçe\tDenetim Testi\tUygulama Notu\n';
     
     selectedData.forEach(item => {
       const madde = (item.madde || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
+      const maddeMetni = (item.maddeMetni || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const rehberRef = (item.rehberRef || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const soru = (item.soru || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const aciklama = (item.aciklama || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const prosedür = (item.prosedür || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       const kanit = (item.kanit || '').replace(/\n/g, ' ').replace(/\t/g, ' ');
       
-      content += `${madde}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}\n`;
+      content += `${madde}\t${maddeMetni}\t${rehberRef}\t${soru}\t${aciklama}\t${prosedür}\t${kanit}\n`;
     });
 
     try {
@@ -413,6 +415,7 @@ export default function TumVeri2Page() {
     filtered = filtered.filter(item => {
       return (
         (columnFilters.madde === '' || item.madde.toLowerCase().includes(columnFilters.madde.toLowerCase())) &&
+        (columnFilters.maddeMetni === '' || item.maddeMetni.toLowerCase().includes(columnFilters.maddeMetni.toLowerCase())) &&
         (columnFilters.rehberRef === '' || item.rehberRef.toLowerCase().includes(columnFilters.rehberRef.toLowerCase())) &&
         (columnFilters.soru === '' || item.soru.toLowerCase().includes(columnFilters.soru.toLowerCase())) &&
         (columnFilters.aciklama === '' || item.aciklama.toLowerCase().includes(columnFilters.aciklama.toLowerCase())) &&
@@ -490,6 +493,16 @@ export default function TumVeri2Page() {
                 type="text"
                 value={columnFilters.madde}
                 onChange={(e) => handleColumnFilter('madde', e.target.value)}
+                className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                placeholder="Filtrele..."
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Madde Metni</label>
+              <input
+                type="text"
+                value={columnFilters.maddeMetni}
+                onChange={(e) => handleColumnFilter('maddeMetni', e.target.value)}
                 className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="Filtrele..."
               />
@@ -576,7 +589,18 @@ export default function TumVeri2Page() {
                     </button>
                   </div>
                 </div>
-                <div className="w-[15%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    <span>Madde Metni</span>
+                    <button 
+                      onClick={() => handleSort('maddeMetni')}
+                      className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                <div className="w-[12%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>İlişkili Rehber</span>
                     <button 
@@ -587,7 +611,7 @@ export default function TumVeri2Page() {
                     </button>
                   </div>
                 </div>
-                <div className="w-[20%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <div className="w-[18%] px-4 py-4 text-left text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   <div className="flex items-center gap-2">
                     <span>Kontrol Sorusu</span>
                     <button 
@@ -682,6 +706,12 @@ export default function TumVeri2Page() {
                     <Badge variant="outline" className="text-xs ml-auto">{item.mevzuat}</Badge>
                   </div>
                   <div className="p-3 space-y-2 text-sm">
+                    {item.maddeMetni && (
+                      <div>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Madde Metni:</span>
+                        <p className="text-slate-700 dark:text-slate-300 line-clamp-2">{item.maddeMetni}</p>
+                      </div>
+                    )}
                     {item.rehberRef && (
                       <div>
                         <span className="text-xs text-slate-500 dark:text-slate-400">Rehber:</span>

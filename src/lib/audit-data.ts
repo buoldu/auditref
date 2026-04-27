@@ -5,6 +5,7 @@ export interface AuditItem {
   id: string;
   mevzuat: string;
   madde: string;
+  maddeMetni: string;
   rehberRef: string;
   soru: string;
   aciklama: string;
@@ -38,11 +39,17 @@ export class AuditDataService {
         return;
       }
       const csvText = await response.text();
+      console.log('CSV loaded, length:', csvText.length);
+      console.log('CSV first 200 chars:', csvText.substring(0, 200));
       
       const parseResult = Papa.parse(csvText, {
         header: true,
         skipEmptyLines: true,
+        delimiter: ';',
       });
+      
+      console.log('Parsed data length:', parseResult.data.length);
+      console.log('First row:', parseResult.data[0]);
 
       // Veriyi parça parça işle
       const rawData = parseResult.data;
@@ -53,8 +60,9 @@ export class AuditDataService {
         const batch = rawData.slice(i, i + batchSize);
         const batchData = batch.map((row: any, index: number) => ({
           id: `audit-${i + index}`,
-          mevzuat: row['Mevuzat'] || '',
+          mevzuat: row['Mevzuat'] || '',
           madde: row['Analiz Edilen Madde'] || row['Analiz Edilen Madde (Yönetmelik Metni)'] || '',
+          maddeMetni: row['Madde Metni'] || '',
           rehberRef: row['İlişkili Rehber Maddesi (Yerel / Uluslararası)'] || '',
           soru: row['Kontrol Sorusu'] || '',
           aciklama: row['Açıklama ve Gerekçe'] || '',
@@ -84,6 +92,7 @@ export class AuditDataService {
         id: 'audit-0',
         mevzuat: 'Örnek Mevzuat',
         madde: 'Alacak Takip Süreci',
+        maddeMetni: 'MADDE 5\n(1) Türkiye\'de kart kuruluşu faaliyetinde bulunmak üzere Kuruma verilecek başvuru dilekçelerine;',
         rehberRef: 'TS 5000 Madde 12',
         soru: 'Alacak takip süreci yasal gerekliliklere uygun mu?',
         aciklama: 'Alacak takip süreci, yasal düzenlemelere ve şirket politikalarına uygun olarak yürütülmelidir.',
@@ -94,6 +103,7 @@ export class AuditDataService {
         id: 'audit-1',
         mevzuat: 'Örnek Mevzuat',
         madde: 'Müşteri Bilgileri',
+        maddeMetni: 'MADDE 6\n(1) Kişisel verilerin korunması gereklidir.',
         rehberRef: 'KVKK Madde 6',
         soru: 'Müşteri bilgileri gizlilik ilkesine uygun mu?',
         aciklama: 'Müşteri bilgileri, kişisel verilerin korunması kanunu hükümlerine göre korunmalıdır.',
@@ -104,6 +114,7 @@ export class AuditDataService {
         id: 'audit-2',
         mevzuat: 'Örnek Mevzuat',
         madde: 'Sözleşme Yönetimi',
+        maddeMetni: 'MADDE 7\n(1) Sözleşmeler yasal forma uygun olarak düzenlenmelidir.',
         rehberRef: 'Borçlar Kanunu Madde 125',
         soru: 'Sözleşmeler yasal gerekliliklere uygun mu?',
         aciklama: 'Tüm sözleşmeler, borçlar kanunu ve ilgili mevzuata uygun olarak hazırlanmalıdır.',
